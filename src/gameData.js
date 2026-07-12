@@ -120,4 +120,46 @@ export const PHASE_2 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2 }
+export const PHASE_3 = {
+  id: 3,
+  sceneKey: 'Phase3',
+  title: 'Honeypot: A Armadilha',
+  narrative: [
+    '"E se, em vez de só bloquear ataques, você pudesse atrair os atacantes para uma armadilha?"',
+    'O técnico instala um servidor falso na sua rede: um honeypot. Ele parece um alvo valioso e',
+    'vulnerável, mas na verdade só existe para enganar quem tentar invadir — e revelar como atacam.',
+  ],
+  objective:
+    'Arraste o honeypot para perto da rota até o Servidor de Arquivos: quanto mais perto do caminho, maior a chance de o ataque cair na armadilha em vez de acertar o alvo real.',
+  tip: 'Um honeypot só funciona perto do alvo real — não perto da entrada. E fechar portas não é armadura completa: ameaças disfarçadas de tráfego que você precisa manter aberto (como HTTPS) ainda podem passar.',
+  threats: [
+    { name: 'Trojan (via SMB)', desc: 'Se infectar o Servidor de Arquivos, a fase é perdida na hora.', level: 3 },
+    { name: 'DDoS', desc: 'Derruba o servidor por alguns segundos — sobrevivível, mas custa pontos.', level: 2 },
+    { name: 'Sinal de Ransomware', desc: 'Ainda não causa dano real nesta fase — é um aviso do que vem a seguir.', level: 1 },
+  ],
+  glossary: [
+    { term: 'Honeypot', desc: 'Sistema intencionalmente vulnerável para atrair e estudar atacantes.' },
+    { term: 'Threat Intelligence', desc: 'Dados sobre táticas do atacante, usados para reforçar defesas reais.' },
+    { term: 'Trojan', desc: 'Malware disfarçado de programa legítimo que abre uma porta dos fundos.' },
+  ],
+  packetPorts: [22, 80, 443, 445, 3306, 3389],
+  maliciousPorts: [22, 443, 445, 3306, 3389],
+  threatByPort: { 22: 'ddos', 443: 'ddos', 445: 'trojan', 3306: 'ddos', 3389: 'ransomware' },
+  // 443 tem chance própria e bem menor: é a porta que o objetivo manda manter
+  // aberta, então fechar tudo não pode ser uma forma de zerar o risco.
+  maliciousChanceByPort: { 443: 0.15 },
+  wavesToWin: 4,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.35,
+  idsErrorChance: 0.2,
+  serverDownMs: 5000,
+  honeypotHp: 10,
+  diversionThreshold: 0.6,
+  achievement: {
+    name: 'Mestre da Armadilha',
+    text: 'Você aprendeu a usar deception para desviar ataques e revelar as táticas do inimigo.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3 }
