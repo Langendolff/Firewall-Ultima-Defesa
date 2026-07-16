@@ -234,4 +234,39 @@ export const PHASE_5 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5 }
+export const PHASE_6 = {
+  id: 6,
+  sceneKey: 'Phase6',
+  title: 'HTTPS ou Morte',
+  narrative: [
+    'Você assume a segurança da loja virtual da empresa. Todo dia, clientes digitam senhas e números',
+    'de cartão de crédito nesse site — e qualquer transação que trafegar sem criptografia pode ser lida',
+    'por qualquer um na mesma rede. Um proxy reverso foi instalado para lidar com os certificados TLS.',
+  ],
+  objective:
+    'Feche a porta 80 (HTTP) no firewall — a loja só deve aceitar tráfego por HTTPS (443). Mesmo assim, alguns pacotes na porta 443 usam certificados forjados: inspecione e bloqueie-os antes que cheguem à loja. Nenhuma transação pode ser interceptada em 5 ondas.',
+  tip: 'Um cadeado aberto (🔓) significa dado em texto puro — qualquer um na rede pode ler. Um cadeado fechado (🔒) nem sempre é confiável: certificados forjados também se disfarçam de HTTPS.',
+  threats: [
+    { name: 'Transação sem criptografia (HTTP)', desc: 'Qualquer transação na porta 80 pode ser lida por um atacante na mesma rede.', level: 3 },
+    { name: 'Certificado Forjado (Man-in-the-Middle)', desc: 'Pacote na porta 443 finge ser HTTPS legítimo para interceptar a transação.', level: 3 },
+  ],
+  glossary: [
+    { term: 'TLS/SSL', desc: 'Protocolo que criptografa a conexão entre cliente e servidor.' },
+    { term: 'Man-in-the-Middle', desc: 'Ataque em que alguém intercepta a comunicação entre duas partes sem que elas percebam.' },
+    { term: 'Proxy Reverso', desc: 'Servidor que fica na frente da aplicação, terminando conexões TLS antes de repassar o tráfego.' },
+  ],
+  packetPorts: [80, 443],
+  maliciousPorts: [80, 443],
+  threatByPort: { 80: 'plaintext', 443: 'mitm' },
+  wavesToWin: 5,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.35,
+  idsErrorChance: 0.2,
+  achievement: {
+    name: 'Guardião do Cadeado',
+    text: 'Você aprendeu que o cadeado no navegador não é cosmético — é a diferença entre dados públicos e privados.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6 }

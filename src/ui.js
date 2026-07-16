@@ -72,14 +72,14 @@ export function skyGradient(scene, x, y, w, h, colorTop, colorBottom) {
 
 // Token visual de um pacote de rede: círculo colorido + envelope + porta,
 // agrupados num Container para que mova como uma unidade só nas tweens.
-export function packetToken(scene, x, y, port, color) {
+export function packetToken(scene, x, y, port, color, icon = '✉️') {
   const container = scene.add.container(x, y)
   const circle = scene.add.circle(0, 0, 15, color).setStrokeStyle(3, COLORS.navy)
-  const icon = scene.add.text(0, -3, '✉️', { fontSize: '13px' }).setOrigin(0.5)
+  const iconText = scene.add.text(0, -3, icon, { fontSize: '13px' }).setOrigin(0.5)
   const label = scene.add
     .text(0, 14, String(port), { fontFamily: FONT_BODY, fontSize: '9px', fontStyle: '800', color: '#1b2a55' })
     .setOrigin(0.5)
-  container.add([circle, icon, label])
+  container.add([circle, iconText, label])
   container.circle = circle
   return container
 }
