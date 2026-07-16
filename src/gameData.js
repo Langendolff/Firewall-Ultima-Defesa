@@ -269,4 +269,45 @@ export const PHASE_6 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6 }
+export const PHASE_7 = {
+  id: 7,
+  sceneKey: 'Phase7',
+  title: 'IDS no Limite',
+  narrative: [
+    'A empresa está sob um ataque coordenado: phishing, DDoS, ransomware e certificados forjados chegam',
+    'juntos, misturados no mesmo tráfego. O IDS foi atualizado para nível 3 e agora bloqueia sozinho parte',
+    'das ameaças que reconhece — mas nenhuma defesa isolada é suficiente contra tudo.',
+  ],
+  objective:
+    'Mantenha o banco de dados intacto e pelo menos 70% dos serviços online até o fim de 7 ondas. O IDS nível 3 bloqueia automaticamente parte dos ataques reconhecidos, mas ainda depende de você para o resto.',
+  tip: 'Nem todo pacote que chega ao destino desaparece. Um APT pode ficar dormente esperando o momento certo — se algo continuar parado onde não deveria, inspecione.',
+  threats: [
+    { name: 'Ataques mistos', desc: 'Phishing, DDoS, ransomware e certificados forjados chegam misturados na mesma onda.', level: 2 },
+    { name: 'APT (Ameaça Persistente Avançada)', desc: 'Se infiltra sem ser detectado e fica dormente até atacar o banco de dados.', level: 3 },
+  ],
+  glossary: [
+    { term: 'APT', desc: 'Se infiltra na rede e fica dormente até atacar.' },
+    { term: 'Defesa em Profundidade', desc: 'Camadas de defesa: se uma falha, a próxima protege.' },
+    { term: 'IDS Nível 3 / IPS', desc: 'Detecta e bloqueia sozinho parte das ameaças reconhecidas.' },
+  ],
+  packetPorts: [25, 80, 443, 445, 3389],
+  maliciousPorts: [25, 80, 443, 445, 3389],
+  threatByPort: { 25: 'phishing', 80: 'ddos', 443: 'mitm', 445: 'trojan', 3389: 'ransomware' },
+  wavesToWin: 7,
+  packetsPerWave: 8,
+  packetIntervalMs: 750,
+  maliciousChance: 0.4,
+  idsErrorChance: 0.2,
+  autoBlockChance: 0.4,
+  serviceDownMs: 6000,
+  aptSpawnDelayMs: 2500,
+  aptDormancyMinMs: 9000,
+  aptDormancyMaxMs: 16000,
+  serviceOnlineRatio: 0.7,
+  achievement: {
+    name: 'Caçador de APTs',
+    text: 'Você percebeu a ameaça dormente antes que ela agisse — nenhuma defesa isolada é suficiente sem vigilância.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7 }
