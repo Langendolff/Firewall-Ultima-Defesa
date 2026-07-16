@@ -45,6 +45,7 @@ export const PORTS = {
   445: { label: 'SMB', desc: 'Compartilhamento de arquivos do Windows. Alvo clássico de worms e ransomware.' },
   3306: { label: 'MySQL', desc: 'Acesso a banco de dados. Nunca deve ficar aberto para a internet.' },
   3389: { label: 'RDP', desc: 'Acesso remoto de área de trabalho. Muito visado por invasores.' },
+  2575: { label: 'HL7', desc: 'Protocolo de comunicação de equipamentos médicos. Precisa ficar sempre aberto.' },
 }
 
 const portsToGlossary = (portNumbers) => portNumbers.map((p) => ({ term: `Porta ${p} (${PORTS[p].label})`, desc: PORTS[p].desc }))
@@ -310,4 +311,44 @@ export const PHASE_7 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7 }
+export const PHASE_8 = {
+  id: 8,
+  sceneKey: 'Phase8',
+  title: 'Código Azul',
+  narrative: [
+    'Você agora protege um hospital. A rede clínica guarda prontuários de pacientes, a rede',
+    'administrativa toca o dia a dia do hospital, e equipamentos médicos — marca-passo, ventilador,',
+    'monitor cardíaco — dependem de uma porta que precisa ficar sempre aberta para funcionar.',
+  ],
+  objective:
+    'Mantenha o servidor de prontuários online ao fim de 8 ondas. A porta dos equipamentos médicos não pode ser fechada — proteja-a inspecionando e bloqueando pacotes manualmente. Qualquer equipamento comprometido é derrota imediata.',
+  tip: 'Hospitais não podem simplesmente parar. Um equipamento médico comprometido não tem segunda chance — fique de olho nos pacotes que miram a porta 2575, mesmo que o IDS não os marque como suspeitos.',
+  threats: [
+    { name: 'Ransomware Hospitalar', desc: 'Ataca o servidor de prontuários — hospitais raramente podem parar para se recuperar.', level: 3 },
+    { name: 'DDoS em Equipamentos IoT', desc: 'Compromete um equipamento médico. Qualquer um comprometido é derrota imediata.', level: 3 },
+    { name: 'Trojan na Rede Administrativa', desc: 'Compromete PCs administrativos — importante, mas não coloca vidas em risco.', level: 2 },
+  ],
+  glossary: [
+    { term: 'IoT', desc: 'Dispositivos conectados com pouco patch de segurança.' },
+    { term: 'LGPD', desc: 'Lei que exige proteção especial para dados de saúde.' },
+    { term: 'IPS', desc: 'Bloqueia ameaças automaticamente, sem depender do firewall.' },
+  ],
+  packetPorts: [80, 445, 3389, 2575],
+  maliciousPorts: [445, 3389, 2575],
+  threatByPort: { 445: 'ransomware', 3389: 'trojan', 2575: 'ddos' },
+  iotPort: 2575,
+  wavesToWin: 8,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.35,
+  idsErrorChance: 0.15,
+  iotAutoBlockChance: 0.5,
+  recordsDownMs: 6000,
+  adminDownMs: 6000,
+  achievement: {
+    name: 'Guardião da Vida',
+    text: 'Você entendeu que alguns sistemas não podem falhar — proteger vidas exige vigilância mesmo onde o firewall não alcança.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7, 8: PHASE_8 }

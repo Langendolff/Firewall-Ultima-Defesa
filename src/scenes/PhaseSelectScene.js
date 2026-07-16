@@ -33,9 +33,16 @@ export default class PhaseSelectScene extends Phaser.Scene {
     this.add.text(cardX + 28, cardY + 40, 'Fundamentos de firewall doméstico', { fontFamily: FONT_HEADING, fontSize: '18px', color: '#1b2a55' })
 
     const n = phases.length
-    const totalW = n * NODE_D + (n - 1) * CONNECTOR_W
+    const baseTotalW = n * NODE_D + (n - 1) * CONNECTOR_W
+    // encolhe nós e conectores proporcionalmente quando não cabem no card —
+    // sem isso, cada fase nova empurra a trilha pra fora da tela (visto na
+    // fase 8: o nó final já nascia cortado na borda direita).
+    const scale = Math.min(1, cardW / baseTotalW)
+    const nodeD = NODE_D * scale
+    const connW = CONNECTOR_W * scale
+    const totalW = n * nodeD + (n - 1) * connW
     const nodeY = cardY + 175
-    let x = cardX + (cardW - totalW) / 2 + NODE_D / 2
+    let x = cardX + (cardW - totalW) / 2 + nodeD / 2
 
     phases.forEach((phase, i) => {
       const done = completed.includes(phase.id)
@@ -57,43 +64,43 @@ export default class PhaseSelectScene extends Phaser.Scene {
 
       if (i > 0) {
         const connectorColor = done || (unlocked && !isCurrent) ? COLORS.greenDark : COLORS.panelLine
-        this.add.rectangle(x - NODE_D / 2 - CONNECTOR_W / 2, nodeY, CONNECTOR_W, 6, connectorColor, 1)
+        this.add.rectangle(x - nodeD / 2 - connW / 2, nodeY, connW, 6, connectorColor, 1)
       }
 
       if (isCurrent) {
-        const ring = this.add.circle(x, nodeY, NODE_D / 2 + 9).setStrokeStyle(4, COLORS.amber)
+        const ring = this.add.circle(x, nodeY, nodeD / 2 + 9).setStrokeStyle(4, COLORS.amber)
         this.tweens.add({ targets: ring, alpha: 0.25, scale: 1.12, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
       }
 
-      this.add.circle(x, nodeY, NODE_D / 2, nodeBg).setStrokeStyle(5, nodeBorder)
+      this.add.circle(x, nodeY, nodeD / 2, nodeBg).setStrokeStyle(5, nodeBorder)
       this.add
-        .text(x, nodeY, unlocked ? String(phase.id) : '🔒', { fontFamily: FONT_HEADING, fontSize: '28px', fontStyle: '800', color: textColor })
+        .text(x, nodeY, unlocked ? String(phase.id) : '🔒', { fontFamily: FONT_HEADING, fontSize: `${28 * scale}px`, fontStyle: '800', color: textColor })
         .setOrigin(0.5)
 
       if (done) {
-        this.add.circle(x + NODE_D * 0.32, nodeY + NODE_D * 0.32, 15, COLORS.white).setStrokeStyle(3, COLORS.greenDark)
-        this.add.text(x + NODE_D * 0.32, nodeY + NODE_D * 0.32, '★', { fontFamily: FONT_HEADING, fontSize: '14px', color: '#f5a623' }).setOrigin(0.5)
+        this.add.circle(x + nodeD * 0.32, nodeY + nodeD * 0.32, 15 * scale, COLORS.white).setStrokeStyle(3, COLORS.greenDark)
+        this.add.text(x + nodeD * 0.32, nodeY + nodeD * 0.32, '★', { fontFamily: FONT_HEADING, fontSize: `${14 * scale}px`, color: '#f5a623' }).setOrigin(0.5)
       }
 
       this.add
-        .text(x, nodeY + NODE_D / 2 + 16, phase.title, {
+        .text(x, nodeY + nodeD / 2 + 16, phase.title, {
           fontFamily: FONT_BODY,
           fontSize: '12px',
           fontStyle: '700',
           color: '#1b2a55',
           align: 'center',
-          wordWrap: { width: NODE_D + 34 },
+          wordWrap: { width: nodeD + 34 },
         })
         .setOrigin(0.5, 0)
 
       if (unlocked) {
         this.add
-          .zone(x, nodeY, NODE_D, NODE_D)
+          .zone(x, nodeY, nodeD, nodeD)
           .setInteractive({ useHandCursor: true })
           .on('pointerdown', () => this.scene.start('Briefing', { phaseId: phase.id }))
       }
 
-      x += NODE_D + CONNECTOR_W
+      x += nodeD + connW
     })
 
     chunkyButton(this, 30, h - 74, 140, 44, {
