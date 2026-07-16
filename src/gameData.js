@@ -47,6 +47,7 @@ export const PORTS = {
   3389: { label: 'RDP', desc: 'Acesso remoto de área de trabalho. Muito visado por invasores.' },
   2575: { label: 'HL7', desc: 'Protocolo de comunicação de equipamentos médicos. Precisa ficar sempre aberto.' },
   701: { label: 'SWIFT', desc: 'Rede de mensagens para transferências bancárias internacionais.' },
+  8080: { label: 'HTTP-ALT', desc: 'Canal alternativo usado por atualizações de fornecedores e sistemas internos.' },
 }
 
 const portsToGlossary = (portNumbers) => portNumbers.map((p) => ({ term: `Porta ${p} (${PORTS[p].label})`, desc: PORTS[p].desc }))
@@ -395,4 +396,58 @@ export const PHASE_9 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7, 8: PHASE_8, 9: PHASE_9 }
+export const PHASE_10 = {
+  id: 10,
+  sceneKey: 'Phase10',
+  title: 'Operação Última Defesa',
+  narrative: [
+    'Um ataque de estado, coordenado e paciente, mira o sistema eleitoral, a usina de energia e a rede',
+    'de comunicação de emergência ao mesmo tempo. Não é mais crime comum — é guerra cibernética. Você',
+    'tem um modo de emergência disponível: sacrificar um sistema para blindar os outros dois.',
+  ],
+  objective:
+    'Sobreviva a 10 ondas mantendo ao menos 2 dos 3 sistemas críticos online. Use o Modo de Emergência a qualquer momento para sacrificar um sistema e reforçar a defesa dos outros dois.',
+  tip: 'Um worm não pedirá licença duas vezes — contenha um sistema infectado antes que ele se espalhe para o próximo. E nem todo pacote perigoso parece perigoso: ataques à cadeia de suprimentos nunca são marcados pelo IDS.',
+  threats: [
+    { name: 'Worm Autopropagante', desc: 'Infecta um sistema e se espalha para outro se não for contido a tempo.', level: 3 },
+    { name: 'Ataque à Cadeia de Suprimentos', desc: 'Chega disfarçado de atualização confiável — o IDS nunca o marca.', level: 3 },
+    { name: 'APT com Múltiplos Vetores', desc: 'Mais de uma ameaça dormente ao mesmo tempo, em sistemas diferentes.', level: 3 },
+  ],
+  glossary: [
+    { term: 'Guerra Cibernética', desc: 'Ataques a infraestrutura crítica como ato de guerra.' },
+    { term: 'Air Gap', desc: 'Isolamento físico total — sem nenhuma conexão à internet.' },
+    { term: 'Cadeia de Suprimentos', desc: 'Ataque via fornecedor ou atualização confiável, não direto.' },
+  ],
+  packetPorts: [80, 443, 445, 8080],
+  maliciousPorts: [445, 8080],
+  threatByPort: { 445: 'worm', 8080: 'supply' },
+  wavesToWin: 10,
+  packetsPerWave: 8,
+  packetIntervalMs: 750,
+  maliciousChance: 0.35,
+  idsErrorChance: 0.15,
+  wormQuarantineWindowMs: 9000,
+  systemDownMs: 6000,
+  emergencyBoost: 0.4,
+  aptSpawnDelaysMs: [2500, 16000],
+  aptDormancyMinMs: 9000,
+  aptDormancyMaxMs: 16000,
+  onlineNeeded: 2,
+  achievement: {
+    name: 'Última Defesa',
+    text: 'Você completou a Fase 10 e protegeu uma infraestrutura crítica inteira contra um ataque de estado. Firewalls, IDS, honeypots, DMZ, backups, TLS, MFA e vigilância constante — cada camada que você aprendeu importou.',
+  },
+}
+
+export const PHASES = {
+  1: PHASE_1,
+  2: PHASE_2,
+  3: PHASE_3,
+  4: PHASE_4,
+  5: PHASE_5,
+  6: PHASE_6,
+  7: PHASE_7,
+  8: PHASE_8,
+  9: PHASE_9,
+  10: PHASE_10,
+}
