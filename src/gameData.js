@@ -198,4 +198,40 @@ export const PHASE_4 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4 }
+export const PHASE_5 = {
+  id: 5,
+  sceneKey: 'Phase5',
+  title: 'O Ransomware Chegou',
+  narrative: [
+    'Um surto de ransomware está se espalhando pela rede da empresa. Um computador infectado tenta',
+    'contaminar outro em poucos segundos — e se nenhum host saudável restar, o próximo alvo é o banco',
+    'de dados. Um servidor de backup foi instalado, mas restaurar um PC isolado custa dinheiro.',
+  ],
+  objective:
+    'Clique em qualquer PC infectado dentro de 10 segundos para isolá-lo antes que o ransomware se espalhe. Use o servidor de backup para restaurar PCs isolados. Mantenha o banco de dados intacto por 6 ondas.',
+  tip: 'Isolar rápido é mais barato que deixar o ransomware se espalhar — cada PC perdido aproxima o ataque do banco de dados.',
+  threats: [{ name: 'Ransomware (SMB/RDP)', desc: 'Infecta um computador; se não for isolado em 10s, se espalha para outro.', level: 3 }],
+  glossary: [
+    { term: 'Contenção', desc: 'Isolar um sistema infectado da rede para impedir que o ataque se espalhe.' },
+    { term: 'Quarentena', desc: 'Cortar a conexão de um host comprometido, mantendo-o offline até ser limpo.' },
+    { term: 'Regra 3-2-1', desc: 'Backup: 3 cópias dos dados, em 2 mídias diferentes, sendo 1 fora do local.' },
+  ],
+  packetPorts: [80, 443, 445, 3389],
+  maliciousPorts: [445, 3389],
+  threatByPort: { 445: 'ransomware', 3389: 'ransomware' },
+  pcKeys: ['pc1', 'pc2', 'pc3', 'pc4'],
+  wavesToWin: 6,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.45,
+  idsErrorChance: 0.2,
+  quarantineWindowMs: 10000,
+  restoreMs: 8000,
+  restoreCost: 15,
+  achievement: {
+    name: 'Bombeiro Digital',
+    text: 'Você conteve todo surto de ransomware antes que se espalhasse — contenção rápida evita danos maiores.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5 }
