@@ -46,6 +46,7 @@ export const PORTS = {
   3306: { label: 'MySQL', desc: 'Acesso a banco de dados. Nunca deve ficar aberto para a internet.' },
   3389: { label: 'RDP', desc: 'Acesso remoto de área de trabalho. Muito visado por invasores.' },
   2575: { label: 'HL7', desc: 'Protocolo de comunicação de equipamentos médicos. Precisa ficar sempre aberto.' },
+  701: { label: 'SWIFT', desc: 'Rede de mensagens para transferências bancárias internacionais.' },
 }
 
 const portsToGlossary = (portNumbers) => portNumbers.map((p) => ({ term: `Porta ${p} (${PORTS[p].label})`, desc: PORTS[p].desc }))
@@ -351,4 +352,47 @@ export const PHASE_8 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7, 8: PHASE_8 }
+export const PHASE_9 = {
+  id: 9,
+  sceneKey: 'Phase9',
+  title: 'Cofre Digital',
+  narrative: [
+    'Você protege um banco. O core bancário guarda o dinheiro de verdade, os ATMs atendem clientes',
+    'na rua, o internet banking processa transações de casa, e o SWIFT move transferências entre',
+    'países. Uma autenticação multifator foi instalada — mas só ajuda enquanto estiver ativa.',
+  ],
+  objective:
+    'Ative o MFA no mapa para reforçar a proteção do internet banking e do SWIFT. Mantenha o core bancário intacto e menos de 3 transações fraudulentas completadas ao fim de 8 ondas.',
+  tip: 'MFA não impede um invasor de tentar — impede que ele complete a fraude sem o segundo fator. O core bancário só é alcançado por uma ameaça que finge ser tráfego comum: fique de olho no que não desaparece.',
+  threats: [
+    { name: 'Fraude via Man-in-the-Middle', desc: 'Intercepta o internet banking para roubar uma transação.', level: 3 },
+    { name: 'Ataque SWIFT', desc: 'Mensagem forjada tenta desviar uma transferência internacional.', level: 3 },
+    { name: 'DDoS nos ATMs', desc: 'Derruba caixas eletrônicos por um tempo — recuperável, mas custa pontos.', level: 2 },
+    { name: 'APT no Core Bancário', desc: 'Se infiltra disfarçado e fica dormente até comprometer o core.', level: 3 },
+  ],
+  glossary: [
+    { term: 'MFA', desc: 'Exige senha + token ou biometria antes de autorizar acesso.' },
+    { term: 'Menor Privilégio', desc: 'Cada sistema acessa só o que precisa — nada além disso.' },
+    { term: 'SWIFT', desc: 'Rede de mensagens para transferências internacionais.' },
+  ],
+  packetPorts: [80, 443, 701, 3389],
+  maliciousPorts: [443, 701, 3389],
+  threatByPort: { 443: 'mitm', 701: 'swift', 3389: 'ddos' },
+  wavesToWin: 8,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.35,
+  idsErrorChance: 0.15,
+  mfaAutoBlockChance: 0.55,
+  atmDownMs: 6000,
+  fraudLimit: 3,
+  aptSpawnDelayMs: 2500,
+  aptDormancyMinMs: 9000,
+  aptDormancyMaxMs: 16000,
+  achievement: {
+    name: 'Guardião do Cofre',
+    text: 'Você completou a fase sem nenhuma fraude — MFA e vigilância constante fecharam toda porta que o atacante tentou usar.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4, 5: PHASE_5, 6: PHASE_6, 7: PHASE_7, 8: PHASE_8, 9: PHASE_9 }

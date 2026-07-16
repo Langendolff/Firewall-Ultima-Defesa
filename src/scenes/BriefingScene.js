@@ -66,43 +66,59 @@ export default class BriefingScene extends Phaser.Scene {
     // grid: ameaças + dica
     const colW = (CONTENT_W - 20) / 2
     const gridY = objY + objH + 10
-    const gridH = Math.max(140, 44 + phase.threats.length * 40 + 16)
+    const gridHFull = Math.max(140, 44 + phase.threats.length * 40 + 16)
+    const glossRowsFull = Math.ceil(phase.glossary.length / 2)
+    const glossHFull = 46 + glossRowsFull * 32 + 14
+
+    // Fases com mais ameaças/termos que o layout original previa (2-3 de cada)
+    // empurram o botão pra fora do canvas de 640px de altura — encolhe a
+    // grade de ameaças, o glossário e o botão proporcionalmente até caber,
+    // em vez de vazar. Fases com o conteúdo original (scale=1) não mudam.
+    const availableForVariable = this.scale.height - gridY - 16
+    const neededForVariable = gridHFull + 16 + glossHFull + 16 + 48
+    const scale = Math.min(1, availableForVariable / neededForVariable)
+
+    const gridH = gridHFull * scale
+    const threatRowH = 40 * scale
+    const threatStartOffset = 44 * scale
 
     card(this, CONTENT_X, gridY, colW, gridH, { radius: 18 })
     this.add.text(CONTENT_X + 20, gridY + 14, 'AMEAÇAS IDENTIFICADAS', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#1b2a55' })
     phase.threats.forEach((threat, i) => {
-      const ty = gridY + 44 + i * 40
+      const ty = gridY + threatStartOffset + i * threatRowH
       const dangerColor = threat.level >= 2 ? COLORS.red : COLORS.amber
-      this.add.circle(CONTENT_X + 34, ty, 15, COLORS.muted)
-      this.add.text(CONTENT_X + 58, ty - 12, threat.name, { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#1b2a55' })
-      this.add.text(CONTENT_X + 58, ty + 4, threat.desc, {
+      this.add.circle(CONTENT_X + 34, ty, 15 * scale, COLORS.muted)
+      this.add.text(CONTENT_X + 58, ty - 12 * scale, threat.name, { fontFamily: FONT_BODY, fontSize: `${13 * scale}px`, fontStyle: '800', color: '#1b2a55' })
+      this.add.text(CONTENT_X + 58, ty + 4 * scale, threat.desc, {
         fontFamily: FONT_BODY,
-        fontSize: '11px',
+        fontSize: `${11 * scale}px`,
         color: '#8a8fa3',
         wordWrap: { width: colW - 130 },
       })
       for (let b = 0; b < 3; b++) {
-        this.add.rectangle(colW - 24 + b * 11, ty - 6, 8, 16, b < threat.level ? dangerColor : COLORS.panel)
+        this.add.rectangle(colW - 24 + b * 11, ty - 6 * scale, 8, 16 * scale, b < threat.level ? dangerColor : COLORS.panel)
       }
     })
 
     const col2X = CONTENT_X + colW + 20
     card(this, col2X, gridY, colW, gridH, { radius: 18 })
     this.add.text(col2X + 20, gridY + 14, 'DICA DO TÉCNICO', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#1b2a55' })
-    this.add.ellipse(col2X + 42, gridY + 62, 44, 50, COLORS.green).setStrokeStyle(4, COLORS.navy)
-    this.add.text(col2X + 72, gridY + 42, `"${phase.tip}"`, {
+    this.add.ellipse(col2X + 42, gridY + 62 * scale, 44, 50, COLORS.green).setStrokeStyle(4, COLORS.navy)
+    this.add.text(col2X + 72, gridY + 42 * scale, `"${phase.tip}"`, {
       fontFamily: FONT_BODY,
-      fontSize: '13px',
+      fontSize: `${13 * scale}px`,
       color: '#3a4160',
       wordWrap: { width: colW - 96 },
       lineSpacing: 3,
     })
 
     // glossário
-    const glossY = gridY + gridH + 16
+    const gap1 = 16 * scale
+    const glossY = gridY + gridH + gap1
     const gCols = 2
-    const gRows = Math.ceil(phase.glossary.length / gCols)
-    const glossH = 46 + gRows * 32 + 14
+    const glossH = glossHFull * scale
+    const glossRowH = 32 * scale
+    const glossStartOffset = 46 * scale
     card(this, CONTENT_X, glossY, CONTENT_W, glossH, { radius: 18 })
     this.add.text(CONTENT_X + 20, glossY + 14, 'GLOSSÁRIO DA FASE', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#1b2a55' })
 
@@ -111,25 +127,27 @@ export default class BriefingScene extends Phaser.Scene {
       const col = i % gCols
       const row = Math.floor(i / gCols)
       const gx = CONTENT_X + 20 + col * gColW
-      const gy = glossY + 46 + row * 32
-      this.add.text(gx, gy, entry.term, { fontFamily: FONT_BODY, fontSize: '12px', fontStyle: '800', color: '#4c7ef3' })
-      this.add.text(gx, gy + 15, entry.desc, {
+      const gy = glossY + glossStartOffset + row * glossRowH
+      this.add.text(gx, gy, entry.term, { fontFamily: FONT_BODY, fontSize: `${12 * scale}px`, fontStyle: '800', color: '#4c7ef3' })
+      this.add.text(gx, gy + 15 * scale, entry.desc, {
         fontFamily: FONT_BODY,
-        fontSize: '11px',
+        fontSize: `${11 * scale}px`,
         color: '#3a4160',
         wordWrap: { width: gColW - 30 },
       })
     })
 
     // botão
-    chunkyButton(this, w / 2 - 130, glossY + glossH + 16, 260, 48, {
+    const gap2 = 16 * scale
+    const btnH = 48 * scale
+    chunkyButton(this, w / 2 - 130, glossY + glossH + gap2, 260, btnH, {
       radius: 16,
       fill: COLORS.amber,
       fillHover: 0xf7b64d,
       shadow: COLORS.amberDark,
       shadowOffset: 6,
       label: 'INICIAR MISSÃO',
-      fontSize: '18px',
+      fontSize: `${18 * scale}px`,
       textColor: '#1b2a55',
       onClick: () => this.scene.start(phase.sceneKey),
     })
