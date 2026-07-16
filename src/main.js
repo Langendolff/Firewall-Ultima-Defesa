@@ -6,6 +6,7 @@ import BriefingScene from './scenes/BriefingScene.js'
 import Phase1Scene from './scenes/Phase1Scene.js'
 import Phase2Scene from './scenes/Phase2Scene.js'
 import Phase3Scene from './scenes/Phase3Scene.js'
+import Phase4Scene from './scenes/Phase4Scene.js'
 import DebriefingScene from './scenes/DebriefingScene.js'
 
 new Phaser.Game({
@@ -18,5 +19,5 @@ new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [MainMenuScene, PhaseSelectScene, BriefingScene, Phase1Scene, Phase2Scene, Phase3Scene, DebriefingScene],
+  scene: [MainMenuScene, PhaseSelectScene, BriefingScene, Phase1Scene, Phase2Scene, Phase3Scene, Phase4Scene, DebriefingScene],
 })

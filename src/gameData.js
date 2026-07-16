@@ -162,4 +162,40 @@ export const PHASE_3 = {
   },
 }
 
-export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3 }
+export const PHASE_4 = {
+  id: 4,
+  sceneKey: 'Phase4',
+  title: 'Bem-vindo à Empresa',
+  narrative: [
+    'Você é o novo analista de segurança de uma empresa de médio porte. A rede tem dez computadores',
+    'de funcionários, um servidor web e um servidor de e-mail — e, em algum lugar, o banco de dados',
+    'que não pode, de jeito nenhum, ficar exposto direto à internet.',
+  ],
+  objective:
+    'Antes de iniciar, arraste os 3 servidores no mapa até os segmentos corretos: web e e-mail vão na DMZ, o banco de dados fica fora dela. Depois, defenda a rede — o servidor web precisa sobreviver 8 ondas sem que o segmento interno seja comprometido.',
+  tip: 'A DMZ existe para isolar quem fala com a internet de quem não deveria. Banco de dados nunca vai na DMZ.',
+  threats: [
+    { name: 'Phishing', desc: 'E-mail disfarçado de legítimo mirando o servidor de e-mail.', level: 2 },
+    { name: 'DDoS no Servidor Web', desc: 'Sobrecarrega o servidor web até derrubá-lo temporariamente.', level: 2 },
+  ],
+  glossary: [
+    { term: 'DMZ', desc: 'Segmento entre a internet e a rede interna, onde ficam servidores públicos.' },
+    { term: 'VLAN', desc: 'Rede virtual que segmenta o tráfego por setor no mesmo switch físico.' },
+    { term: 'Segmentação', desc: 'Dividir a rede em partes isoladas para conter um ataque a uma área específica.' },
+  ],
+  packetPorts: [25, 80, 443],
+  maliciousPorts: [25, 80, 443],
+  threatByPort: { 25: 'phishing', 80: 'ddos', 443: 'ddos' },
+  wavesToWin: 8,
+  packetsPerWave: 8,
+  packetIntervalMs: 800,
+  maliciousChance: 0.4,
+  idsErrorChance: 0.2,
+  serverDownMs: 5000,
+  achievement: {
+    name: 'Arquiteto de Redes',
+    text: 'Você aprendeu a isolar servidores públicos numa DMZ, longe da rede interna e do banco de dados.',
+  },
+}
+
+export const PHASES = { 1: PHASE_1, 2: PHASE_2, 3: PHASE_3, 4: PHASE_4 }
