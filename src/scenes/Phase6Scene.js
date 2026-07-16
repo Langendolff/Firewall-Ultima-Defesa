@@ -32,6 +32,7 @@ export default class Phase6Scene extends Phaser.Scene {
     const { width: w } = this.scale
     this.cameras.main.setBackgroundColor(COLORS.grassLight)
     this.gameOver = false
+    this.setupDone = false
 
     // HUD
     card(this, 0, 0, w, 52, { radius: 0, fill: COLORS.navy })

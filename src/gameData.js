@@ -265,7 +265,10 @@ export const PHASE_6 = {
   packetsPerWave: 8,
   packetIntervalMs: 800,
   maliciousChance: 0.35,
-  idsErrorChance: 0.2,
+  // tolerância zero nesta fase (qualquer interceptação = derrota) já é dura o
+  // suficiente sozinha; um idsErrorChance no mesmo nível das outras fases fazia
+  // o jogador perder por azar puro mesmo clicando em tudo que ficava vermelho.
+  idsErrorChance: 0.1,
   achievement: {
     name: 'Guardião do Cadeado',
     text: 'Você aprendeu que o cadeado no navegador não é cosmético — é a diferença entre dados públicos e privados.',
