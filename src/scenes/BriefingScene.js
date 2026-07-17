@@ -2,7 +2,9 @@ import Phaser from 'phaser'
 import { COLORS, PHASES, FONT_HEADING, FONT_BODY } from '../gameData.js'
 import { card, chunkyButton } from '../ui.js'
 
-const CONTENT_X = 40
+// CONTENT_X desloca o conteúdo (desenhado para um canvas de 960px) para o
+// centro do canvas atual de 1440px: (1440 - 960) / 2 = 240.
+const CONTENT_X = 40 + 240
 const CONTENT_W = 880
 
 export default class BriefingScene extends Phaser.Scene {
@@ -96,7 +98,7 @@ export default class BriefingScene extends Phaser.Scene {
         wordWrap: { width: colW - 130 },
       })
       for (let b = 0; b < 3; b++) {
-        this.add.rectangle(colW - 24 + b * 11, ty - 6 * scale, 8, 16 * scale, b < threat.level ? dangerColor : COLORS.panel)
+        this.add.rectangle(CONTENT_X + colW - 24 + b * 11, ty - 6 * scale, 8, 16 * scale, b < threat.level ? dangerColor : COLORS.panel)
       }
     })
 

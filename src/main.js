@@ -18,8 +18,12 @@ import DebriefingScene from './scenes/DebriefingScene.js'
 new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'app',
-  width: 960,
-  height: 640,
+  // 1440x900 casa com a resolução do mockup de referência (Firewall - Telas
+  // do Jogo (standalone).html) — mais próximo do aspect ratio 16:9/16:10 dos
+  // monitores reais, então sobra bem menos borda lateral que os 960x640
+  // antigos, e o canvas fica nítido em telas HiDPI em vez de esticado.
+  width: 1440,
+  height: 900,
   backgroundColor: COLORS.navy,
   scale: {
     mode: Phaser.Scale.FIT,

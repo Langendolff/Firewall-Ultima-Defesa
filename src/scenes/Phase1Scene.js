@@ -4,7 +4,9 @@ import { card, packetToken, backButton } from '../ui.js'
 import { buildSpeedControls } from '../speedControl.js'
 import { buildPortModal } from '../portModal.js'
 
-const MAP_X = 20
+// MAP_X desloca o tabuleiro (desenhado para um canvas de 960px) para o
+// centro do canvas atual de 1440px: (1440 - 960) / 2 = 240.
+const MAP_X = 20 + 240
 const MAP_Y = 66
 const MAP_W = 920
 const MAP_H = 500

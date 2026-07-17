@@ -3,7 +3,9 @@ import { COLORS, PHASES, FONT_HEADING, FONT_BODY } from '../gameData.js'
 import { card, chunkyButton, statCard } from '../ui.js'
 import { completePhase } from '../progress.js'
 
-const CONTENT_X = 40
+// CONTENT_X desloca o conteúdo (desenhado para um canvas de 960px) para o
+// centro do canvas atual de 1440px: (1440 - 960) / 2 = 240.
+const CONTENT_X = 40 + 240
 const CONTENT_W = 880
 
 // payload esperado: { phaseId, success, reason, statCards: [{value,label,color}], achievement, funFact, stars }
