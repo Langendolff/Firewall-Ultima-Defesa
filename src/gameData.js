@@ -454,3 +454,10 @@ export const PHASES = {
   9: PHASE_9,
   10: PHASE_10,
 }
+
+// Capítulos (Arcos) conforme src/data/Firewall_Fases_Roteiro.md, seção 1.2
+export const ARCS = [
+  { title: 'Arco 1 — Fundamentos', subtitle: 'Rede Doméstica', phaseIds: [1, 2, 3] },
+  { title: 'Arco 2 — Corporativo', subtitle: 'Empresa / E-commerce', phaseIds: [4, 5, 6, 7] },
+  { title: 'Arco 3 — Missão Crítica', subtitle: 'Hospital / Banco / Governo', phaseIds: [8, 9, 10] },
+]
