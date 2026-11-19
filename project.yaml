@@ -7,7 +7,7 @@ project:
   name: "Firewall: A Última Defesa"
   genre: tower-defense educativo
   language: pt-BR
-  url: https://firewall-virid.vercel.app
+  url: https://firewall-ultima-defesa.vercel.app
 
 engine:
   name: Web

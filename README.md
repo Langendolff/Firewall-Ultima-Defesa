@@ -8,15 +8,15 @@
 
 Tower defense educativo no navegador: configure portas, leia o IDS e contenha ataques, da rede de casa até a infraestrutura crítica de um país.
 
-[![Jogar](https://img.shields.io/badge/jogar-no%20navegador-F5A623?style=flat-square)](https://firewall-virid.vercel.app)
-[![CI](https://img.shields.io/github/actions/workflow/status/Langendolff/firewall/ci.yml?style=flat-square&label=CI)](https://github.com/Langendolff/firewall/actions/workflows/ci.yml)
+[![Jogar](https://img.shields.io/badge/jogar-no%20navegador-F5A623?style=flat-square)](https://firewall-ultima-defesa.vercel.app)
+[![CI](https://img.shields.io/github/actions/workflow/status/Langendolff/Firewall-Ultima-Defesa/ci.yml?style=flat-square&label=CI)](https://github.com/Langendolff/Firewall-Ultima-Defesa/actions/workflows/ci.yml)
 ![Phaser](https://img.shields.io/badge/Phaser-4-4C7EF3?style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Idioma](https://img.shields.io/badge/idioma-PT--BR-3FBF7F?style=flat-square)
 ![Offline](https://img.shields.io/badge/conta-nenhuma-1B2A55?style=flat-square)
 [![Licença: PolyForm Noncommercial](https://img.shields.io/badge/licen%C3%A7a-PolyForm%20Noncommercial-blue?style=flat-square)](LICENSE)
 
-[🇺🇸 English version](README.en.md) · [▶ Jogar agora](https://firewall-virid.vercel.app) · [Fases](#fases) · [Rodar localmente](#rodar-localmente)
+[🇺🇸 English version](README.en.md) · [▶ Jogar agora](https://firewall-ultima-defesa.vercel.app) · [Fases](#fases) · [Rodar localmente](#rodar-localmente)
 
 <br>
 
@@ -85,7 +85,7 @@ painel-guia embaixo do mapa e o **Debriefing** com estatísticas e conquista.
 
 ## Jogar
 
-Abra **[firewall-virid.vercel.app](https://firewall-virid.vercel.app)** num navegador de
+Abra **[firewall-ultima-defesa.vercel.app](https://firewall-ultima-defesa.vercel.app)** num navegador de
 computador. Não precisa instalar nem criar conta. O progresso fica salvo no próprio
 navegador (`localStorage`).
 
@@ -94,8 +94,8 @@ navegador (`localStorage`).
 Requisitos: Node `^22.12 || ^24 || >=26`.
 
 ```sh
-git clone https://github.com/Langendolff/firewall.git
-cd firewall
+git clone https://github.com/Langendolff/Firewall-Ultima-Defesa.git
+cd Firewall-Ultima-Defesa
 npm install
 npm run dev        # servidor de desenvolvimento
 npm run build      # build de produção em dist/
@@ -119,7 +119,7 @@ rode `npx playwright install chromium`. O CI roda tudo a cada push e pull reques
 ## Arquitetura
 
 ```
-firewall/
+Firewall-Ultima-Defesa/
 ├── src/
 │   ├── main.js           # cria o Phaser.Game, carrega as fontes e aplica a dificuldade
 │   ├── gameData.js       # todo o conteúdo e os valores de ajuste das 10 fases
@@ -147,7 +147,7 @@ não exige mexer no código da cena.
 O Firewall é um projeto educacional distribuído sob a [PolyForm Noncommercial 1.0.0](LICENSE).
 
 - **Permitido sem pedir autorização:** jogar, estudar, ensinar, pesquisar, modificar e usar para fins pessoais ou em escolas, universidades, ONGs e órgãos públicos.
-- **Uso comercial** (vender, incluir em produto, curso ou plataforma paga, ou republicar em revistas, coletâneas e veículos comerciais) só com autorização por escrito do autor. Para isso, [abra uma issue](https://github.com/Langendolff/firewall/issues) ou fale com o autor pelo [GitHub](https://github.com/Langendolff).
+- **Uso comercial** (vender, incluir em produto, curso ou plataforma paga, ou republicar em revistas, coletâneas e veículos comerciais) só com autorização por escrito do autor. Para isso, [abra uma issue](https://github.com/Langendolff/Firewall-Ultima-Defesa/issues) ou fale com o autor pelo [GitHub](https://github.com/Langendolff).
 
 A logo e o ícone (`design/brand/`) fazem parte do projeto e seguem a mesma licença. As
 fontes Baloo 2 e Nunito são do Google Fonts, sob a SIL Open Font License.
@@ -155,7 +155,7 @@ fontes Baloo 2 e Nunito são do Google Fonts, sob a SIL Open Font License.
 ## Status
 
 Versão `1.1`. As 10 fases estão completas e jogáveis do início ao fim.
-Sugestões e problemas são bem-vindos nas [Issues](https://github.com/Langendolff/firewall/issues).
+Sugestões e problemas são bem-vindos nas [Issues](https://github.com/Langendolff/Firewall-Ultima-Defesa/issues).
 
 ---
 

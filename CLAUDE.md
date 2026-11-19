@@ -3,7 +3,7 @@
 Tower defense educativo sobre segurança de redes, em PT-BR. São 10 fases em 3
 arcos (Fundamentos → Corporativo → Missão crítica). Cada fase é
 briefing → fase jogável → debriefing. O jogo roda no navegador e fica publicado
-em https://firewall-virid.vercel.app.
+em https://firewall-ultima-defesa.vercel.app.
 
 ## Stack
 

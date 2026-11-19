@@ -8,15 +8,15 @@
 
 An educational browser tower defense: configure ports, read the IDS and contain attacks, from a home network all the way to a country's critical infrastructure.
 
-[![Play](https://img.shields.io/badge/play-in%20your%20browser-F5A623?style=flat-square)](https://firewall-virid.vercel.app)
-[![CI](https://img.shields.io/github/actions/workflow/status/Langendolff/firewall/ci.yml?style=flat-square&label=CI)](https://github.com/Langendolff/firewall/actions/workflows/ci.yml)
+[![Play](https://img.shields.io/badge/play-in%20your%20browser-F5A623?style=flat-square)](https://firewall-ultima-defesa.vercel.app)
+[![CI](https://img.shields.io/github/actions/workflow/status/Langendolff/Firewall-Ultima-Defesa/ci.yml?style=flat-square&label=CI)](https://github.com/Langendolff/Firewall-Ultima-Defesa/actions/workflows/ci.yml)
 ![Phaser](https://img.shields.io/badge/Phaser-4-4C7EF3?style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Language](https://img.shields.io/badge/language-Portuguese%20(BR)-3FBF7F?style=flat-square)
 ![Offline](https://img.shields.io/badge/account-none-1B2A55?style=flat-square)
 [![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue?style=flat-square)](LICENSE)
 
-[🇧🇷 Versão em português](README.md) · [▶ Play now](https://firewall-virid.vercel.app) · [Phases](#phases) · [Run locally](#run-locally)
+[🇧🇷 Versão em português](README.md) · [▶ Play now](https://firewall-ultima-defesa.vercel.app) · [Phases](#phases) · [Run locally](#run-locally)
 
 <br>
 
@@ -80,7 +80,7 @@ The full teaching script, with each phase's goals, threats and concepts, is in
 
 ## Play
 
-Open **[firewall-virid.vercel.app](https://firewall-virid.vercel.app)** in a desktop
+Open **[firewall-ultima-defesa.vercel.app](https://firewall-ultima-defesa.vercel.app)** in a desktop
 browser. Nothing to install, no account. Progress is saved in the browser (`localStorage`).
 
 ## Run locally
@@ -88,8 +88,8 @@ browser. Nothing to install, no account. Progress is saved in the browser (`loca
 Requirements: Node `^22.12 || ^24 || >=26`.
 
 ```sh
-git clone https://github.com/Langendolff/firewall.git
-cd firewall
+git clone https://github.com/Langendolff/Firewall-Ultima-Defesa.git
+cd Firewall-Ultima-Defesa
 npm install
 npm run dev        # development server
 npm run build      # production build in dist/
@@ -117,7 +117,7 @@ Browser tests use the installed Chrome/Chromium (or `CHROME_PATH`); with neither
 Firewall is an educational project distributed under the [PolyForm Noncommercial 1.0.0](LICENSE).
 
 - **Allowed without asking:** playing, studying, teaching, research, modifying, and use for personal purposes or in schools, universities, non-profits and public bodies.
-- **Commercial use** (selling, including it in a paid product, course or platform, or republishing it in magazines, collections and commercial outlets) requires written permission from the author. [Open an issue](https://github.com/Langendolff/firewall/issues) or reach the author on [GitHub](https://github.com/Langendolff).
+- **Commercial use** (selling, including it in a paid product, course or platform, or republishing it in magazines, collections and commercial outlets) requires written permission from the author. [Open an issue](https://github.com/Langendolff/Firewall-Ultima-Defesa/issues) or reach the author on [GitHub](https://github.com/Langendolff).
 
 The logo and icon (`design/brand/`) are part of the project and use the same license. The
 Baloo 2 and Nunito fonts come from Google Fonts under the SIL Open Font License.
