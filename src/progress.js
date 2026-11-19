@@ -19,3 +19,11 @@ export function completePhase(id) {
 export function isUnlocked(id) {
   return id === 1 || getCompleted().includes(id - 1)
 }
+
+export function resetProgress() {
+  try {
+    localStorage.removeItem(KEY)
+  } catch {
+    // sem localStorage: não há o que apagar
+  }
+}

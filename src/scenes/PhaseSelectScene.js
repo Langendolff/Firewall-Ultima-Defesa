@@ -2,15 +2,16 @@ import Phaser from 'phaser'
 import { COLORS, PHASES, ARCS, FONT_HEADING, FONT_BODY } from '../gameData.js'
 import { card, chunkyButton, skyGradient } from '../ui.js'
 import { getCompleted, isUnlocked } from '../progress.js'
+import { DIFFICULTIES, currentDifficulty } from '../difficulty.js'
 
 // Trilha de fases estilo "mapa de progressão", agora um card por capítulo
-// (Arco), como descrito no roteiro (src/data/Firewall_Fases_Roteiro.md,
+// (Arco), como descrito no roteiro (design/levels/roteiro-fases.md,
 // seção 1.2): nós circulares numerados ligados por conectores, com anel
 // pulsante na fase atual.
-const NODE_D = 62
-const CONNECTOR_W = 28
-const CARD_H = 164
-const CARD_GAP = 12
+const NODE_D = 86
+const CONNECTOR_W = 72
+const CARD_H = 236
+const CARD_GAP = 16
 
 export default class PhaseSelectScene extends Phaser.Scene {
   constructor() {
@@ -21,7 +22,7 @@ export default class PhaseSelectScene extends Phaser.Scene {
     const { width: w, height: h } = this.scale
     skyGradient(this, 0, 0, w, h, COLORS.sky, COLORS.grassLight)
 
-    this.add.text(w / 2, 26, 'SUA JORNADA DE DEFESA', { fontFamily: FONT_HEADING, fontSize: '22px', color: '#1b2a55' }).setOrigin(0.5)
+    this.add.text(w / 2, 36, 'SUA JORNADA DE DEFESA', { fontFamily: FONT_HEADING, fontSize: '30px', color: '#1b2a55' }).setOrigin(0.5)
 
     const completed = getCompleted()
     const current = Object.values(PHASES)
@@ -30,17 +31,17 @@ export default class PhaseSelectScene extends Phaser.Scene {
 
     const cardX = 40
     const cardW = w - 80
-    let cardY = 54
+    let cardY = 74
 
     ARCS.forEach((arc) => {
       card(this, cardX, cardY, cardW, CARD_H, { radius: 24 })
-      this.add.text(cardX + 28, cardY + 14, arc.title.toUpperCase(), { fontFamily: FONT_BODY, fontSize: '12px', fontStyle: '800', color: '#8a8fa3' })
-      this.add.text(cardX + 28, cardY + 32, arc.subtitle, { fontFamily: FONT_HEADING, fontSize: '16px', color: '#1b2a55' })
+      this.add.text(cardX + 28, cardY + 14, arc.title.toUpperCase(), { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '800', color: '#8a8fa3' })
+      this.add.text(cardX + 28, cardY + 36, arc.subtitle, { fontFamily: FONT_HEADING, fontSize: '22px', color: '#1b2a55' })
 
       const phases = arc.phaseIds.map((id) => PHASES[id])
       const n = phases.length
       const totalW = n * NODE_D + (n - 1) * CONNECTOR_W
-      const nodeY = cardY + 96
+      const nodeY = cardY + 118
       let x = cardX + (cardW - totalW) / 2 + NODE_D / 2
 
       phases.forEach((phase, i) => {
@@ -73,22 +74,22 @@ export default class PhaseSelectScene extends Phaser.Scene {
 
         this.add.circle(x, nodeY, NODE_D / 2, nodeBg).setStrokeStyle(5, nodeBorder)
         this.add
-          .text(x, nodeY, unlocked ? String(phase.id) : '🔒', { fontFamily: FONT_HEADING, fontSize: '20px', fontStyle: '800', color: textColor })
+          .text(x, nodeY, unlocked ? String(phase.id) : '🔒', { fontFamily: FONT_HEADING, fontSize: '30px', fontStyle: '800', color: textColor })
           .setOrigin(0.5)
 
         if (done) {
-          this.add.circle(x + NODE_D * 0.32, nodeY + NODE_D * 0.32, 12, COLORS.white).setStrokeStyle(3, COLORS.greenDark)
-          this.add.text(x + NODE_D * 0.32, nodeY + NODE_D * 0.32, '★', { fontFamily: FONT_HEADING, fontSize: '11px', color: '#f5a623' }).setOrigin(0.5)
+          this.add.circle(x + NODE_D * 0.34, nodeY + NODE_D * 0.34, 15, COLORS.white).setStrokeStyle(3, COLORS.greenDark)
+          this.add.text(x + NODE_D * 0.34, nodeY + NODE_D * 0.34, '★', { fontFamily: FONT_HEADING, fontSize: '15px', color: '#f5a623' }).setOrigin(0.5)
         }
 
         this.add
           .text(x, nodeY + NODE_D / 2 + 10, phase.title, {
             fontFamily: FONT_BODY,
-            fontSize: '10px',
+            fontSize: '15px',
             fontStyle: '700',
             color: '#1b2a55',
             align: 'center',
-            wordWrap: { width: NODE_D + 26 },
+            wordWrap: { width: NODE_D + CONNECTOR_W - 14 },
           })
           .setOrigin(0.5, 0)
 
@@ -115,5 +116,14 @@ export default class PhaseSelectScene extends Phaser.Scene {
       textColor: '#1b2a55',
       onClick: () => this.scene.start('MainMenu'),
     })
+
+    this.add
+      .text(w - 40, h - 38, `Dificuldade: ${DIFFICULTIES[currentDifficulty()].label} (mude em Opções, no menu)`, {
+        fontFamily: FONT_BODY,
+        fontSize: '15px',
+        fontStyle: '700',
+        color: '#1b2a55',
+      })
+      .setOrigin(1, 0.5)
   }
 }

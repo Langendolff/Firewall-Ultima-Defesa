@@ -3,7 +3,7 @@
 export const FONT_HEADING = '"Baloo 2", sans-serif'
 export const FONT_BODY = 'Nunito, sans-serif'
 
-// Paleta extraída do mockup em src/data/Firewall - Telas do Jogo (standalone).html
+// Paleta extraída do mockup em design/ux/mockup-telas.html
 export const COLORS = {
   navy: 0x1b2a55,
   white: 0xffffff,
@@ -56,6 +56,12 @@ export const PHASE_1 = {
   id: 1,
   sceneKey: 'Phase1',
   title: 'Primeira Conexão',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Clique no firewall (o quadrado azul ⚙️) para ver as portas.',
+    'Deixe ABERTAS só a 80 e a 443. Clique nas outras para FECHAR.',
+    'Feche a janela e clique em "Começar". Porta fechada barra o pacote sozinha.',
+  ],
   narrative: [
     'Você acabou de instalar seu roteador e conectou sua casa à internet. Um técnico aparece:',
     '"Parabéns, você está online! Só que agora a internet inteira pode bater na sua porta —',
@@ -93,6 +99,12 @@ export const PHASE_2 = {
   id: 2,
   sceneKey: 'Phase2',
   title: 'Os Primeiros Ataques',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Pacotes ganham cor ao passar pelo IDS (🔍): "!" vermelho é suspeito.',
+    'Clique num pacote para bloqueá-lo antes que chegue a um PC.',
+    'O IDS às vezes erra. Passe o mouse no pacote para ver a porta.',
+  ],
   narrative: [
     '"Sua rede já tem um firewall, mas olha isso..." O técnico mostra um log em',
     'tempo real com tentativas de conexão vindo da internet. Alguns pacotes são',
@@ -127,6 +139,12 @@ export const PHASE_3 = {
   id: 3,
   sceneKey: 'Phase3',
   title: 'Honeypot: A Armadilha',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Arraste o honeypot (a armadilha) para perto da linha até o Servidor de Arquivos.',
+    'Clique nos pacotes suspeitos para bloqueá-los.',
+    'Cuidado com a porta 445: um Trojan no servidor acaba a fase.',
+  ],
   narrative: [
     '"E se, em vez de só bloquear ataques, você pudesse atrair os atacantes para uma armadilha?"',
     'O técnico instala um servidor falso na sua rede: um honeypot. Ele parece um alvo valioso e',
@@ -169,6 +187,12 @@ export const PHASE_4 = {
   id: 4,
   sceneKey: 'Phase4',
   title: 'Bem-vindo à Empresa',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Arraste os servidores: Web e E-mail na DMZ, Banco de Dados fora dela.',
+    'Clique em "Iniciar Ondas" quando estiverem no lugar.',
+    'Clique nos pacotes suspeitos para bloqueá-los.',
+  ],
   narrative: [
     'Você é o novo analista de segurança de uma empresa de médio porte. A rede tem dez computadores',
     'de funcionários, um servidor web e um servidor de e-mail — e, em algum lugar, o banco de dados',
@@ -205,6 +229,12 @@ export const PHASE_5 = {
   id: 5,
   sceneKey: 'Phase5',
   title: 'O Ransomware Chegou',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'PC vermelho = infectado. Clique nele logo para isolá-lo, antes que espalhe.',
+    'Clique no Backup (💾) para restaurar um PC isolado.',
+    'Bloqueie pacotes suspeitos nas portas 445 e 3389.',
+  ],
   narrative: [
     'Um surto de ransomware está se espalhando pela rede da empresa. Um computador infectado tenta',
     'contaminar outro em poucos segundos — e se nenhum host saudável restar, o próximo alvo é o banco',
@@ -241,6 +271,12 @@ export const PHASE_6 = {
   id: 6,
   sceneKey: 'Phase6',
   title: 'HTTPS ou Morte',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Clique no firewall e FECHE a porta 80 (HTTP).',
+    'Clique em "Iniciar Ondas".',
+    'Na porta 443, passe o mouse nos pacotes e bloqueie os de certificado forjado.',
+  ],
   narrative: [
     'Você assume a segurança da loja virtual da empresa. Todo dia, clientes digitam senhas e números',
     'de cartão de crédito nesse site — e qualquer transação que trafegar sem criptografia pode ser lida',
@@ -279,6 +315,12 @@ export const PHASE_7 = {
   id: 7,
   sceneKey: 'Phase7',
   title: 'IDS no Limite',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'O IDS bloqueia sozinho parte dos ataques. Clique nos que sobrarem.',
+    'Um APT pode se esconder no banco de dados: clique nele para neutralizar.',
+    'Mantenha a maioria dos serviços online até a última onda.',
+  ],
   narrative: [
     'A empresa está sob um ataque coordenado: phishing, DDoS, ransomware e certificados forjados chegam',
     'juntos, misturados no mesmo tráfego. O IDS foi atualizado para nível 3 e agora bloqueia sozinho parte',
@@ -320,6 +362,12 @@ export const PHASE_8 = {
   id: 8,
   sceneKey: 'Phase8',
   title: 'Código Azul',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'A porta dos equipamentos médicos não fecha: bloqueie à mão os ataques nela.',
+    'Clique em "Iniciar Ondas" quando estiver pronto.',
+    'Prioridade: equipamentos médicos, depois prontuários, depois PCs.',
+  ],
   narrative: [
     'Você agora protege um hospital. A rede clínica guarda prontuários de pacientes, a rede',
     'administrativa toca o dia a dia do hospital, e equipamentos médicos — marca-passo, ventilador,',
@@ -360,6 +408,12 @@ export const PHASE_9 = {
   id: 9,
   sceneKey: 'Phase9',
   title: 'Cofre Digital',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Clique em MFA no mapa para ativá-lo.',
+    'Bloqueie pacotes suspeitos indo para o internet banking e o SWIFT.',
+    'Um APT pode se esconder no core bancário: clique nele para neutralizar.',
+  ],
   narrative: [
     'Você protege um banco. O core bancário guarda o dinheiro de verdade, os ATMs atendem clientes',
     'na rua, o internet banking processa transações de casa, e o SWIFT move transferências entre',
@@ -403,6 +457,12 @@ export const PHASE_10 = {
   id: 10,
   sceneKey: 'Phase10',
   title: 'Operação Última Defesa',
+  // Passos curtos mostrados no painel-guia durante a fase (src/guide.js).
+  howTo: [
+    'Bloqueie pacotes suspeitos. Atualizações na porta 8080 nunca ficam vermelhas: desconfie.',
+    'Sistema infectado por worm? Clique nele para conter.',
+    'Em apuros, o Modo de Emergência sacrifica um sistema para salvar os outros.',
+  ],
   narrative: [
     'Um ataque de estado, coordenado e paciente, mira o sistema eleitoral, a usina de energia e a rede',
     'de comunicação de emergência ao mesmo tempo. Não é mais crime comum — é guerra cibernética. Você',
@@ -455,7 +515,7 @@ export const PHASES = {
   10: PHASE_10,
 }
 
-// Capítulos (Arcos) conforme src/data/Firewall_Fases_Roteiro.md, seção 1.2
+// Capítulos (Arcos) conforme design/levels/roteiro-fases.md, seção 1.2
 export const ARCS = [
   { title: 'Arco 1 — Fundamentos', subtitle: 'Rede Doméstica', phaseIds: [1, 2, 3] },
   { title: 'Arco 2 — Corporativo', subtitle: 'Empresa / E-commerce', phaseIds: [4, 5, 6, 7] },

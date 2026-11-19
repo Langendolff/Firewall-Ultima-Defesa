@@ -1,12 +1,15 @@
 import Phaser from 'phaser'
 import { COLORS, PHASES, FONT_HEADING, FONT_BODY } from '../gameData.js'
-import { card, chunkyButton, statCard } from '../ui.js'
+import { chunkyButton } from '../ui.js'
 import { completePhase } from '../progress.js'
 
-// CONTENT_X desloca o conteúdo (desenhado para um canvas de 960px) para o
-// centro do canvas atual de 1440px: (1440 - 960) / 2 = 240.
-const CONTENT_X = 40 + 240
-const CONTENT_W = 880
+// Debriefing depois de cada fase. Mesmo princípio do briefing: o layout flui
+// pela altura real de cada texto, fica centralizado na tela e encolhe só se
+// não couber. Na derrota, além do motivo, mostra a dica do técnico para a
+// próxima tentativa: quem não joga precisa saber o que fazer diferente.
+const CONTENT_W = 1040
+const MARGIN_Y = 24
+const MIN_SCALE = 0.75
 
 // payload esperado: { phaseId, success, reason, statCards: [{value,label,color}], achievement, funFact, stars }
 export default class DebriefingScene extends Phaser.Scene {
@@ -21,137 +24,208 @@ export default class DebriefingScene extends Phaser.Scene {
   }
 
   create() {
-    const { width: w } = this.scale
-    const { success, statCards = [], achievement, reason, funFact, stars = 0 } = this.data_
+    this.cameras.main.setBackgroundColor(COLORS.cream)
+    const available = this.scale.height - 2 * MARGIN_Y
+    let scale = 1
+    let root = this.layout(scale)
+    while (root.contentH > available && scale > MIN_SCALE) {
+      root.destroy()
+      scale -= 0.04
+      root = this.layout(scale)
+    }
+    root.y = Math.max(MARGIN_Y, (this.scale.height - root.contentH) / 2)
+  }
+
+  layout(s) {
+    const { success, statCards = [], achievement, reason, funFact } = this.data_
     const phase = this.phase
     const nextPhase = PHASES[phase.id + 1]
-    this.cameras.main.setBackgroundColor(COLORS.cream)
+    const root = this.add.container(0, 0)
+    const x0 = (this.scale.width - CONTENT_W) / 2
+    const px = (n) => Math.round(n * s)
+    const font = (n) => `${px(n)}px`
+    const put = (obj) => {
+      root.add(obj)
+      return obj
+    }
+    const text = (x, y, str, style) => put(this.add.text(x, y, str, { fontFamily: FONT_BODY, ...style }))
+    const pad = px(24)
+    const gap = px(18)
+    let y = 0
 
-    // banner
-    const bannerY = 34
-    const bannerH = 82
+    // ---- faixa de resultado ----
+    const bannerH = px(104)
     const bannerColor = success ? COLORS.green : COLORS.red
     const bannerShadow = success ? COLORS.greenDark : COLORS.redDark
-    chunkyButton(this, CONTENT_X, bannerY, CONTENT_W, bannerH, {
-      radius: 18,
-      fill: bannerColor,
-      shadow: bannerShadow,
-      shadowOffset: 6,
-      label: '',
-    })
-    this.add.text(CONTENT_X + 26, bannerY + 18, success ? `FASE ${phase.id} CONCLUÍDA` : `FASE ${phase.id} NÃO CONCLUÍDA`, {
-      fontFamily: FONT_BODY,
-      fontSize: '11px',
+    const banner = put(this.add.graphics())
+    banner.fillStyle(bannerShadow, 1).fillRoundedRect(x0, y, CONTENT_W, bannerH + px(6), px(20))
+    banner.fillStyle(bannerColor, 1).fillRoundedRect(x0, y, CONTENT_W, bannerH, px(20))
+    text(x0 + pad + px(4), y + px(20), success ? `FASE ${phase.id} CONCLUÍDA` : `FASE ${phase.id} NÃO CONCLUÍDA`, {
+      fontSize: font(14),
       fontStyle: '800',
-      color: '#f0fff6',
-    })
-    this.add.text(CONTENT_X + 26, bannerY + 34, `"${phase.title}"`, { fontFamily: FONT_HEADING, fontSize: '26px', color: '#ffffff' })
-    if (success) {
-      this.add.circle(CONTENT_X + CONTENT_W - 60, bannerY + bannerH / 2, 30, COLORS.white)
-      this.add
-        .text(CONTENT_X + CONTENT_W - 60, bannerY + bannerH / 2, '★'.repeat(Math.max(1, stars)), {
-          fontFamily: FONT_HEADING,
-          fontSize: '18px',
-          fontStyle: '800',
-          color: '#3fbf7f',
-        })
-        .setOrigin(0.5)
-    }
-
-    // estatísticas
-    const statY = bannerY + bannerH + 26
-    const statH = 96
-    const gap = 18
-    const statW = (CONTENT_W - gap * (statCards.length - 1)) / statCards.length
-    statCards.forEach((sc, i) => statCard(this, CONTENT_X + i * (statW + gap), statY, statW, statH, sc))
-
-    // conquista/motivo + curiosidade
-    const rowY = statY + statH + 24
-    const rowH = 140
-    const colW = (CONTENT_W - 20) / 2
-
-    card(this, CONTENT_X, rowY, colW, rowH, { radius: 18 })
-    if (success && achievement) {
-      card(this, CONTENT_X + 18, rowY + 20, 64, 64, { radius: 16, fill: COLORS.amber })
-      this.add.text(CONTENT_X + 50, rowY + 52, '🏅', { fontSize: '26px' }).setOrigin(0.5)
-      this.add.text(CONTENT_X + 96, rowY + 18, 'CONQUISTA DESBLOQUEADA', { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '800', color: '#8a8fa3' })
-      this.add.text(CONTENT_X + 96, rowY + 32, achievement.name, { fontFamily: FONT_HEADING, fontSize: '17px', color: '#1b2a55' })
-      this.add.text(CONTENT_X + 96, rowY + 58, achievement.text, {
-        fontFamily: FONT_BODY,
-        fontSize: '12px',
-        color: '#5a6072',
-        wordWrap: { width: colW - 120 },
-      })
-    } else {
-      card(this, CONTENT_X + 18, rowY + 20, 64, 64, { radius: 16, fill: COLORS.red })
-      this.add.text(CONTENT_X + 50, rowY + 52, '💡', { fontSize: '26px' }).setOrigin(0.5)
-      this.add.text(CONTENT_X + 96, rowY + 18, 'O QUE ACONTECEU', { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '800', color: '#8a8fa3' })
-      this.add.text(CONTENT_X + 96, rowY + 34, reason || 'A missão não foi concluída desta vez.', {
-        fontFamily: FONT_BODY,
-        fontSize: '13px',
-        color: '#3a4160',
-        wordWrap: { width: colW - 120 },
-        lineSpacing: 3,
-      })
-    }
-
-    const col2X = CONTENT_X + colW + 20
-    card(this, col2X, rowY, colW, rowH, { radius: 18, fill: COLORS.navy })
-    this.add.text(col2X + 20, rowY + 16, 'SABIA QUE NO MUNDO REAL...', { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '800', color: '#8fa5e8' })
-    this.add.text(col2X + 20, rowY + 36, funFact || '', {
-      fontFamily: FONT_BODY,
-      fontSize: '12px',
       color: '#ffffff',
-      wordWrap: { width: colW - 40 },
-      lineSpacing: 3,
-    })
-
-    // botões
-    const btnY = rowY + rowH + 24
-    chunkyButton(this, w / 2 - 160, btnY, 140, 46, {
-      radius: 14,
-      fill: COLORS.white,
-      shadow: COLORS.cardShadow,
-      shadowOffset: 5,
-      label: 'Menu',
-      fontSize: '16px',
-      textColor: '#1b2a55',
-      onClick: () => this.scene.start('MainMenu'),
-    })
-
-    if (success && nextPhase) {
-      chunkyButton(this, w / 2 + 20, btnY, 200, 46, {
-        radius: 14,
-        fill: COLORS.green,
-        fillHover: 0x52d492,
-        shadow: COLORS.greenDark,
-        shadowOffset: 5,
-        label: 'Próxima Fase →',
-        fontSize: '15px',
-        onClick: () => this.scene.start('Briefing', { phaseId: nextPhase.id }),
-      })
-    } else if (success) {
-      chunkyButton(this, w / 2 + 20, btnY, 200, 46, {
-        radius: 14,
-        fill: COLORS.green,
-        fillHover: 0x52d492,
-        shadow: COLORS.greenDark,
-        shadowOffset: 5,
-        label: 'Jogar Novamente',
-        fontSize: '15px',
-        onClick: () => this.scene.start('Briefing', { phaseId: phase.id }),
-      })
+    }).setAlpha(0.9)
+    text(x0 + pad + px(4), y + px(42), `"${phase.title}"`, { fontFamily: FONT_HEADING, fontSize: font(36), color: '#ffffff' })
+    if (success) {
+      for (let i = 0; i < 3; i++) {
+        const sx = x0 + CONTENT_W - pad - px(30) - (2 - i) * px(58)
+        put(this.add.star(sx, y + bannerH / 2, 5, px(11), px(25), COLORS.amber).setStrokeStyle(px(3), COLORS.amberDark))
+      }
     } else {
-      chunkyButton(this, w / 2 + 20, btnY, 200, 46, {
-        radius: 14,
-        fill: COLORS.amber,
-        fillHover: 0xf7b64d,
-        shadow: COLORS.amberDark,
-        shadowOffset: 5,
-        label: 'Tentar Novamente',
-        fontSize: '15px',
-        onClick: () => this.scene.start(phase.sceneKey),
-      })
+      text(x0 + CONTENT_W - pad, y + bannerH / 2, 'Tudo bem errar: é assim que se aprende.', {
+        fontSize: font(16),
+        fontStyle: '700',
+        color: '#ffffff',
+      }).setOrigin(1, 0.5)
     }
+    y += bannerH + px(6) + gap
+
+    // ---- estatísticas ----
+    if (statCards.length) {
+      const sgap = px(16)
+      const sw = (CONTENT_W - sgap * (statCards.length - 1)) / statCards.length
+      const sh = px(112)
+      statCards.forEach((sc, i) => {
+        const sx = x0 + i * (sw + sgap)
+        put(this.add.graphics().fillStyle(COLORS.white, 1).fillRoundedRect(sx, y, sw, sh, px(18)))
+        put(
+          this.add
+            .text(sx + sw / 2, y + px(40), String(sc.value), { fontFamily: FONT_HEADING, fontSize: font(40), fontStyle: '800', color: sc.color })
+            .setOrigin(0.5),
+        )
+        put(
+          this.add
+            .text(sx + sw / 2, y + px(84), sc.label, {
+              fontFamily: FONT_BODY,
+              fontSize: font(15),
+              fontStyle: '700',
+              color: '#5a6072',
+              align: 'center',
+              wordWrap: { width: sw - px(20) },
+            })
+            .setOrigin(0.5),
+        )
+      })
+      y += sh + gap
+    }
+
+    // ---- conquista ou motivo + dica | curiosidade ----
+    const colGap = px(18)
+    const colW = (CONTENT_W - colGap) / 2
+    const rowY = y
+    const leftBg = put(this.add.graphics())
+    const rightBg = put(this.add.graphics())
+    const iconS = px(68)
+    const ix = x0 + pad
+    const tx = ix + iconS + px(18)
+    const tw = x0 + colW - pad - tx
+    let ly = rowY + pad
+
+    const heading = (x, yy, str, color = '#8a8fa3') => text(x, yy, str, { fontSize: font(13), fontStyle: '800', color })
+
+    if (success && achievement) {
+      this.drawMedal(root, ix + iconS / 2, rowY + pad + iconS / 2, iconS)
+      heading(tx, ly, 'CONQUISTA DESBLOQUEADA')
+      const name = text(tx, ly + px(20), achievement.name, { fontFamily: FONT_HEADING, fontSize: font(22), color: '#1b2a55' })
+      const body = text(tx, name.y + name.height + px(4), achievement.text, {
+        fontSize: font(16),
+        color: '#3a4160',
+        wordWrap: { width: tw },
+        lineSpacing: px(3),
+      })
+      ly = body.y + body.height
+    } else {
+      this.drawAlert(root, ix + iconS / 2, rowY + pad + iconS / 2, iconS)
+      heading(tx, ly, 'O QUE ACONTECEU')
+      const body = text(tx, ly + px(22), reason || 'A missão não foi concluída desta vez.', {
+        fontSize: font(17),
+        color: '#1b2a55',
+        wordWrap: { width: tw },
+        lineSpacing: px(3),
+      })
+      heading(tx, body.y + body.height + px(16), 'PARA A PRÓXIMA TENTATIVA', '#c17e0f')
+      const tip = text(tx, body.y + body.height + px(38), phase.tip, {
+        fontSize: font(16),
+        fontStyle: 'italic',
+        color: '#3a4160',
+        wordWrap: { width: tw },
+        lineSpacing: px(3),
+      })
+      ly = tip.y + tip.height
+    }
+    const leftH = Math.max(ly - rowY + pad, iconS + 2 * pad)
+
+    const rx = x0 + colW + colGap
+    heading(rx + pad, rowY + pad, 'SABIA QUE NO MUNDO REAL...', '#8fa5e8')
+    const fact = text(rx + pad, rowY + pad + px(24), funFact || '', {
+      fontSize: font(17),
+      color: '#ffffff',
+      wordWrap: { width: colW - 2 * pad },
+      lineSpacing: px(4),
+    })
+    const rightH = fact.y + fact.height - rowY + pad
+
+    const rowH = Math.max(leftH, rightH)
+    leftBg.fillStyle(COLORS.white, 1).fillRoundedRect(x0, rowY, colW, rowH, px(18))
+    rightBg.fillStyle(COLORS.navy, 1).fillRoundedRect(rx, rowY, colW, rowH, px(18))
+    y = rowY + rowH + px(26)
+
+    // ---- botões ----
+    const btnH = px(58)
+    const specs = [{ label: 'Menu', w: 160, style: 'white', onClick: () => this.scene.start('MainMenu') }]
+    if (success) {
+      specs.push({ label: 'Jogar de novo', w: 210, style: 'white', onClick: () => this.scene.start('Briefing', { phaseId: phase.id }) })
+      if (nextPhase) specs.push({ label: 'Próxima fase  →', w: 260, style: 'green', onClick: () => this.scene.start('Briefing', { phaseId: nextPhase.id }) })
+    } else {
+      specs.push({ label: 'Rever briefing', w: 210, style: 'white', onClick: () => this.scene.start('Briefing', { phaseId: phase.id }) })
+      specs.push({ label: 'Tentar de novo  ↻', w: 260, style: 'amber', onClick: () => this.scene.start(phase.sceneKey) })
+    }
+    const styles = {
+      white: { fill: COLORS.white, fillHover: COLORS.panel, shadow: COLORS.pillShadow, textColor: '#1b2a55' },
+      green: { fill: COLORS.green, fillHover: 0x52d492, shadow: COLORS.greenDark, textColor: '#ffffff' },
+      amber: { fill: COLORS.amber, fillHover: 0xf7b64d, shadow: COLORS.amberDark, textColor: '#1b2a55' },
+    }
+    const bgap = px(18)
+    const total = specs.reduce((sum, b) => sum + px(b.w), 0) + bgap * (specs.length - 1)
+    let bx = (this.scale.width - total) / 2
+    specs.forEach((b) => {
+      const btn = chunkyButton(this, bx, y, px(b.w), btnH, {
+        radius: px(18),
+        shadowOffset: px(6),
+        label: b.label,
+        fontSize: font(19),
+        onClick: b.onClick,
+        ...styles[b.style],
+      })
+      root.add([btn.graphics, btn.text])
+      bx += px(b.w) + bgap
+    })
+    y += btnH + px(6)
+
+    root.contentH = y
+    return root
+  }
+
+  /** Medalha desenhada: fitas + disco com estrela. */
+  drawMedal(root, x, y, size) {
+    const r = size * 0.36
+    const g = this.add.graphics()
+    g.fillStyle(COLORS.blue, 1).fillTriangle(x - r * 0.9, y - size * 0.5, x - r * 0.1, y - size * 0.5, x, y)
+    g.fillStyle(COLORS.red, 1).fillTriangle(x + r * 0.9, y - size * 0.5, x + r * 0.1, y - size * 0.5, x, y)
+    g.fillStyle(COLORS.amber, 1).fillCircle(x, y + size * 0.1, r)
+    g.lineStyle(Math.max(2, size * 0.05), COLORS.amberDark, 1).strokeCircle(x, y + size * 0.1, r)
+    root.add(g)
+    root.add(this.add.star(x, y + size * 0.1, 5, r * 0.3, r * 0.65, COLORS.white))
+  }
+
+  /** Alerta desenhado: círculo vermelho com "!". */
+  drawAlert(root, x, y, size) {
+    root.add(this.add.circle(x, y, size * 0.46, COLORS.redSoft))
+    root.add(this.add.circle(x, y, size * 0.34, COLORS.red))
+    root.add(
+      this.add
+        .text(x, y, '!', { fontFamily: FONT_HEADING, fontSize: `${Math.round(size * 0.46)}px`, fontStyle: '800', color: '#ffffff' })
+        .setOrigin(0.5),
+    )
   }
 }

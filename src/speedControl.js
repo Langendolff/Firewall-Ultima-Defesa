@@ -1,26 +1,35 @@
 import { COLORS } from './gameData.js'
 import { chunkyButton } from './ui.js'
-
-// timeScale aplicado a scene.time e scene.tweens — "normal" é mais lento que a
-// duração bruta das tweens (que viram a referência de velocidade "rápida" x2.3).
-const SPEED_SCALES = { normal: 0.65, fast: 1.5 }
+import { speedScales } from './difficulty.js'
 
 // Botões de pausa/normal/rápido no HUD. Controla o ritmo da simulação via
-// timeScale em vez de reescrever cada duração de tween/timer da cena.
-export function buildSpeedControls(scene, x, y) {
+// timeScale em vez de reescrever cada duração de tween/timer da cena. Os
+// valores de timeScale vêm da dificuldade (difficulty.js): no Tranquilo o
+// "normal" é mais lento.
+//
+// Os botões têm texto, não só ícone: quem não joga não reconhece ⏸ ⏩. Ficam
+// sempre centralizados no HUD; x e y são aceitos só por compatibilidade.
+const BTN_W = 92
+const BTN_H = 30
+const GAP = 8
+
+export function buildSpeedControls(scene, _x, y = 11) {
   const state = { current: 'normal' }
   const buttons = {}
+  const total = 3 * BTN_W + 2 * GAP
+  const x0 = scene.scale.width / 2 - total / 2
 
   const apply = (name) => {
     state.current = name
+    const scales = speedScales()
     if (name === 'paused') {
       scene.time.paused = true
       scene.tweens.pauseAll()
     } else {
       scene.time.paused = false
       scene.tweens.resumeAll()
-      scene.time.timeScale = SPEED_SCALES[name]
-      scene.tweens.timeScale = SPEED_SCALES[name]
+      scene.time.timeScale = scales[name]
+      scene.tweens.timeScale = scales[name]
     }
     Object.entries(buttons).forEach(([key, btn]) => {
       btn.setColors(key === name ? COLORS.amber : COLORS.white, key === name ? COLORS.amberDark : COLORS.pillShadow)
@@ -28,13 +37,13 @@ export function buildSpeedControls(scene, x, y) {
   }
 
   const specs = [
-    { key: 'paused', label: '⏸' },
-    { key: 'normal', label: '▶' },
-    { key: 'fast', label: '⏩' },
+    { key: 'paused', label: '❚❚ Pausar' },
+    { key: 'normal', label: '▶ Normal' },
+    { key: 'fast', label: '▶▶ Rápido' },
   ]
   specs.forEach((spec, i) => {
-    buttons[spec.key] = chunkyButton(scene, x + i * 34, y, 28, 28, {
-      radius: 8,
+    buttons[spec.key] = chunkyButton(scene, x0 + i * (BTN_W + GAP), y, BTN_W, BTN_H, {
+      radius: 9,
       fill: COLORS.white,
       shadow: COLORS.pillShadow,
       shadowOffset: 3,

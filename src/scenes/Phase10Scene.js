@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { COLORS, PORTS, PHASE_10, FONT_HEADING, FONT_BODY } from '../gameData.js'
-import { card, packetToken, backButton } from '../ui.js'
+import { card, packetToken, backButton, PACKET_HIT_RADIUS } from '../ui.js'
+import { buildGuide } from '../guide.js'
 import { buildSpeedControls } from '../speedControl.js'
 import { buildPortModal } from '../portModal.js'
 
@@ -45,6 +46,7 @@ export default class Phase10Scene extends Phaser.Scene {
   }
 
   create() {
+    this.guide = null
     const { width: w } = this.scale
     this.cameras.main.setBackgroundColor(COLORS.grassLight)
     this.gameOver = false
@@ -57,19 +59,20 @@ export default class Phase10Scene extends Phaser.Scene {
       this.waveSquares.push(this.add.rectangle(210 + i * 18, 26, 13, 18, COLORS.panelLine, 1))
     }
     this.speed = buildSpeedControls(this, w / 2 - 20, 12)
+    this.add.text(w - 162, 26, 'PONTOS', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#8fa5e8' }).setOrigin(1, 0.5)
     this.add.circle(w - 148, 26, 9, COLORS.amber)
     this.scoreText = this.add.text(w - 130, 17, '', { fontFamily: FONT_HEADING, fontSize: '16px', fontStyle: '800', color: '#ffffff' })
     backButton(this, w - 44, 8)
 
     // painel do mapa de rede
     card(this, MAP_X, MAP_Y, MAP_W, MAP_H, { radius: 22 })
-    this.add.text(MAP_X + 20, MAP_Y + 14, 'MAPA DA REDE', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#8a8fa3' })
+    this.add.text(MAP_X + 20, MAP_Y + 14, 'MAPA DA REDE', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#8a8fa3' })
     this.buildNetworkMap()
-    this.statusText = this.add.text(MAP_X + 20, MAP_Y + MAP_H - 22, '', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '700', color: '#8a8fa3' })
+    this.statusText = this.add.text(MAP_X + 20, MAP_Y + MAP_H - 22, '', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#8a8fa3' })
 
     // painel inspetor de pacotes
     card(this, INSP_X, INSP_Y, INSP_W, INSP_H, { radius: 22 })
-    this.add.text(INSP_X + 20, INSP_Y + 16, 'PACOTE SELECIONADO', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#8a8fa3' })
+    this.add.text(INSP_X + 20, INSP_Y + 16, 'PACOTE SELECIONADO', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#8a8fa3' })
     this.buildInspector()
 
     this.portOpen = {}
@@ -99,8 +102,13 @@ export default class Phase10Scene extends Phaser.Scene {
 
     this.refreshHud()
     this.refreshStatus()
-    this.startWave()
-    PHASE_10.aptSpawnDelaysMs.forEach((delay) => this.time.delayedCall(delay, () => this.spawnApt()))
+    this.guide = buildGuide(this, {
+      phase: PHASE_10,
+      onStart: () => {
+        this.startWave()
+        PHASE_10.aptSpawnDelaysMs.forEach((delay) => this.time.delayedCall(delay, () => this.spawnApt()))
+      },
+    })
   }
 
   buildNetworkMap() {
@@ -128,21 +136,21 @@ export default class Phase10Scene extends Phaser.Scene {
     this.add.text(NODES.switch.x, NODES.switch.y, '🔀', { fontSize: '16px' }).setOrigin(0.5)
 
     Object.values(NODES).forEach((n) => {
-      this.add.text(n.x, n.y + 38, n.label, { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '700', color: '#1b2a55' }).setOrigin(0.5)
+      this.add.text(n.x, n.y + 38, n.label, { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#1b2a55' }).setOrigin(0.5)
     })
 
     this.systemNodes = {}
     Object.entries(SYSTEM_POS).forEach(([key, p]) => {
       const container = this.add.container(p.x, p.y)
       const rect = this.add.rectangle(0, 0, 60, 46, COLORS.green).setStrokeStyle(4, COLORS.navy)
-      const icon = this.add.text(0, -6, p.icon, { fontSize: '18px' }).setOrigin(0.5)
-      const badge = this.add.text(0, 14, '', { fontFamily: FONT_BODY, fontSize: '8px', fontStyle: '800', color: '#ffffff' }).setOrigin(0.5)
+      const icon = this.add.text(0, -5, p.icon, { fontSize: '18px' }).setOrigin(0.5)
+      const badge = this.add.text(0, 14, '', { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '800', color: '#ffffff' }).setOrigin(0.5)
       container.add([rect, icon, badge])
       container.setInteractive(new Phaser.Geom.Rectangle(-30, -23, 60, 46), Phaser.Geom.Rectangle.Contains)
       container.input.cursor = 'pointer'
       container.on('pointerdown', () => this.onSystemClick(key))
       this.add
-        .text(p.x, p.y + 30, p.label, { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '700', color: '#1b2a55', align: 'center', wordWrap: { width: 100 } })
+        .text(p.x, p.y + 33, p.label, { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#1b2a55', align: 'center', wordWrap: { width: 130 } })
         .setOrigin(0.5, 0)
       this.systemNodes[key] = { container, rect, icon, badge }
     })
@@ -155,7 +163,7 @@ export default class Phase10Scene extends Phaser.Scene {
     this.emergencyIcon = this.add.text(EMERGENCY_POS.x, EMERGENCY_POS.y - 3, '🚨', { fontSize: '18px' }).setOrigin(0.5)
     this.emergencyStatus = this.add.text(EMERGENCY_POS.x, EMERGENCY_POS.y + 14, '', { fontFamily: FONT_BODY, fontSize: '8px', fontStyle: '800', color: '#1b2a55' }).setOrigin(0.5)
     this.add
-      .text(EMERGENCY_POS.x, EMERGENCY_POS.y + 32, 'Modo de Emergência', { fontFamily: FONT_BODY, fontSize: '10px', fontStyle: '700', color: '#1b2a55', align: 'center', wordWrap: { width: 90 } })
+      .text(EMERGENCY_POS.x, EMERGENCY_POS.y + 33, 'Modo de Emergência', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#1b2a55', align: 'center', wordWrap: { width: 90 } })
       .setOrigin(0.5, 0)
   }
 
@@ -255,20 +263,20 @@ export default class Phase10Scene extends Phaser.Scene {
     this.add.text(x + swatchW / 2, swatchY + swatchH / 2, '✉️', { fontSize: '18px' }).setOrigin(0.5)
 
     const rowY = swatchY + swatchH + 20
-    this.add.text(x, rowY, 'Porta', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#8a8fa3' })
-    this.inspPort = this.add.text(x + swatchW, rowY, '—', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
+    this.add.text(x, rowY, 'Porta', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '700', color: '#8a8fa3' })
+    this.inspPort = this.add.text(x + swatchW, rowY, '—', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
 
-    this.add.text(x, rowY + 26, 'Alvo', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#8a8fa3' })
-    this.inspTarget = this.add.text(x + swatchW, rowY + 26, '—', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
+    this.add.text(x, rowY + 26, 'Alvo', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '700', color: '#8a8fa3' })
+    this.inspTarget = this.add.text(x + swatchW, rowY + 26, '—', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
 
-    this.add.text(x, rowY + 52, 'Classificação', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#8a8fa3' })
-    this.inspClass = this.add.text(x + swatchW, rowY + 52, '—', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
+    this.add.text(x, rowY + 52, 'Classificação', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '700', color: '#8a8fa3' })
+    this.inspClass = this.add.text(x + swatchW, rowY + 52, '—', { fontFamily: FONT_BODY, fontSize: '14px', fontStyle: '800', color: '#1b2a55' }).setOrigin(1, 0)
 
     const descY = rowY + 84
     card(this, x, descY, swatchW, INSP_H - (descY - INSP_Y) - 16, { radius: 12, fill: COLORS.panel })
     this.inspDesc = this.add.text(x + 12, descY + 12, 'Passe o mouse sobre um pacote para inspecioná-lo.', {
       fontFamily: FONT_BODY,
-      fontSize: '12px',
+      fontSize: '13px',
       color: '#5a6072',
       wordWrap: { width: swatchW - 24 },
       lineSpacing: 3,
@@ -328,11 +336,12 @@ export default class Phase10Scene extends Phaser.Scene {
   }
 
   showToast(msg) {
+    this.guide?.log(msg, 'event')
     const { width: w } = this.scale
     const toast = this.add
       .text(w / 2, 60, msg, {
         fontFamily: FONT_BODY,
-        fontSize: '13px',
+        fontSize: '14px',
         fontStyle: '700',
         color: '#ffffff',
         backgroundColor: '#1b2a55',
@@ -391,7 +400,7 @@ export default class Phase10Scene extends Phaser.Scene {
     const token = packetToken(this, start.x, start.y, port, COLORS.muted)
 
     const packet = { port, malicious, kind, idsTag, target, token, resolved: false, classified: false }
-    token.setInteractive(new Phaser.Geom.Circle(0, 0, 15), Phaser.Geom.Circle.Contains)
+    token.setInteractive(new Phaser.Geom.Circle(0, 0, PACKET_HIT_RADIUS), Phaser.Geom.Circle.Contains)
     token.input.cursor = 'pointer'
     token.on('pointerover', () => {
       this.inspectedPacket = packet
@@ -444,7 +453,7 @@ export default class Phase10Scene extends Phaser.Scene {
 
   classifyPacket(packet) {
     packet.classified = true
-    packet.token.circle.setFillStyle(packet.idsTag === 'red' ? COLORS.red : COLORS.green)
+    packet.token.setTag(packet.idsTag)
     this.tweens.add({ targets: packet.token, scale: 1.3, duration: 120, yoyo: true, ease: 'Sine.easeOut' })
     if (this.inspectedPacket === packet) this.showInspector(packet)
   }
@@ -463,6 +472,7 @@ export default class Phase10Scene extends Phaser.Scene {
   blockPacket(packet) {
     if (packet.resolved || this.gameOver) return
     packet.resolved = true
+    this.guide.onBlock(packet)
     this.tweens.killTweensOf(packet.token)
     this.tweens.add({
       targets: packet.token,
@@ -486,6 +496,7 @@ export default class Phase10Scene extends Phaser.Scene {
   deliverPacket(packet) {
     if (packet.resolved || this.gameOver) return
     packet.resolved = true
+    this.guide.onDeliver(packet)
     packet.token.destroy()
 
     if (!packet.malicious) {
@@ -533,7 +544,7 @@ export default class Phase10Scene extends Phaser.Scene {
     const token = packetToken(this, start.x, start.y, 443, COLORS.muted, '📦')
 
     const packet = { port: 443, malicious: true, kind: 'apt', idsTag: 'green', token, resolved: false, classified: false, isApt: true, target }
-    token.setInteractive(new Phaser.Geom.Circle(0, 0, 15), Phaser.Geom.Circle.Contains)
+    token.setInteractive(new Phaser.Geom.Circle(0, 0, PACKET_HIT_RADIUS), Phaser.Geom.Circle.Contains)
     token.input.cursor = 'pointer'
     token.on('pointerover', () => {
       this.inspectedPacket = packet

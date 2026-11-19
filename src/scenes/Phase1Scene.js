@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
-import { COLORS, PHASE_1, FONT_HEADING, FONT_BODY } from '../gameData.js'
-import { card, packetToken, backButton } from '../ui.js'
+import { COLORS, PORTS, PHASE_1, FONT_HEADING, FONT_BODY } from '../gameData.js'
+import { card, packetToken, backButton, floatMark } from '../ui.js'
+import { buildGuide, coach } from '../guide.js'
 import { buildSpeedControls } from '../speedControl.js'
 import { buildPortModal } from '../portModal.js'
 
@@ -23,6 +24,7 @@ export default class Phase1Scene extends Phaser.Scene {
   }
 
   create() {
+    this.guide = null
     const { width: w } = this.scale
     this.cameras.main.setBackgroundColor(COLORS.grassLight)
 
@@ -34,13 +36,14 @@ export default class Phase1Scene extends Phaser.Scene {
       this.waveSquares.push(this.add.rectangle(210 + i * 30, 26, 22, 22, COLORS.panelLine, 1))
     }
     this.speed = buildSpeedControls(this, w / 2 - 47, 12)
+    this.add.text(w - 162, 26, 'PONTOS', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#8fa5e8' }).setOrigin(1, 0.5)
     this.add.circle(w - 148, 26, 9, COLORS.amber)
     this.scoreText = this.add.text(w - 130, 17, '', { fontFamily: FONT_HEADING, fontSize: '16px', fontStyle: '800', color: '#ffffff' })
     backButton(this, w - 44, 8)
 
     // painel do mapa de rede
     card(this, MAP_X, MAP_Y, MAP_W, MAP_H, { radius: 22 })
-    this.add.text(MAP_X + 20, MAP_Y + 14, 'MAPA DA REDE', { fontFamily: FONT_BODY, fontSize: '11px', fontStyle: '800', color: '#8a8fa3' })
+    this.add.text(MAP_X + 20, MAP_Y + 14, 'MAPA DA REDE', { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '800', color: '#8a8fa3' })
     this.buildNetworkMap()
 
     this.portOpen = {}
@@ -62,7 +65,9 @@ export default class Phase1Scene extends Phaser.Scene {
     this.waveLeaks = 0
 
     this.refreshHud()
-    this.startWave()
+    this.guide = buildGuide(this, { phase: PHASE_1, legend: false, onStart: () => this.startWave() })
+    // tutorial: destaca o firewall até a primeira vez que ele for aberto
+    this.dismissCoach = coach(this, NODES.firewall.x, NODES.firewall.y, 'Comece aqui: clique no firewall', { radius: 50 })
   }
 
   buildNetworkMap() {
@@ -85,12 +90,19 @@ export default class Phase1Scene extends Phaser.Scene {
     this.add.text(NODES.home.x, NODES.home.y, '🏠', { fontSize: '24px' }).setOrigin(0.5)
 
     Object.values(NODES).forEach((n) => {
-      this.add.text(n.x, n.y + 46, n.label, { fontFamily: FONT_BODY, fontSize: '12px', fontStyle: '700', color: '#1b2a55' }).setOrigin(0.5)
+      this.add.text(n.x, n.y + 46, n.label, { fontFamily: FONT_BODY, fontSize: '13px', fontStyle: '700', color: '#1b2a55' }).setOrigin(0.5)
     })
   }
 
   toggleFirewallModal(show) {
     this.portModal.setVisible(show)
+    if (show && this.dismissCoach) {
+      this.dismissCoach()
+      this.dismissCoach = null
+    }
+    if (!show && !this.guide.started) {
+      this.guide.log('Portas configuradas. Clique em "Começar a fase" para ver o firewall em ação.', 'info')
+    }
     if (show) {
       this.speedBeforeModal = this.speed.current
       this.speed.set('paused')
@@ -160,6 +172,7 @@ export default class Phase1Scene extends Phaser.Scene {
       onComplete: () => packet.destroy(),
     })
 
+    const name = `${port} (${PORTS[port].label})`
     if (reachedHome) {
       if (legit) {
         this.score += 10
@@ -167,10 +180,14 @@ export default class Phase1Scene extends Phaser.Scene {
         this.score -= 10
         this.totalLeaked++
         this.waveLeaks++
+        floatMark(this, NODES.home.x, NODES.home.y - 30, false)
+        this.guide.log(`Um pacote entrou pela porta ${name}, que estava aberta sem necessidade. Feche-a no firewall.`, 'bad')
       }
     } else {
       this.score += legit ? -5 : 5
       if (!legit) this.totalBlocked++
+      floatMark(this, NODES.firewall.x, NODES.firewall.y - 30, !legit)
+      if (legit) this.guide.log(`A porta ${name} está fechada, mas você precisa dela para navegar. Abra-a no firewall.`, 'bad')
     }
 
     this.refreshHud()
@@ -183,6 +200,14 @@ export default class Phase1Scene extends Phaser.Scene {
   finishWave() {
     this.streak = this.waveLeaks === 0 ? this.streak + 1 : 0
     this.refreshHud()
+    if (this.waveLeaks === 0) {
+      this.guide.log(`Onda sem nenhum vazamento! ${this.streak} de ${PHASE_1.wavesToWin} seguidas.`, 'good')
+    } else {
+      this.guide.log(
+        `Essa onda teve ${this.waveLeaks} vazamento(s), então a sequência voltou a zero. Você precisa de ${PHASE_1.wavesToWin} ondas seguidas sem vazamento.`,
+        'warn',
+      )
+    }
 
     if (this.streak >= PHASE_1.wavesToWin) {
       this.time.delayedCall(800, () => {

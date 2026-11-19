@@ -1,0 +1,35 @@
+# Configuração do projeto, legível por máquina. Estrutura inspirada no
+# Claude Code Game Studios; CLAUDE.md é a referência para humanos e para o Claude.
+
+schema_version: 1
+
+project:
+  name: "Firewall: A Última Defesa"
+  genre: tower-defense educativo
+  language: pt-BR
+  url: https://firewall-virid.vercel.app
+
+engine:
+  name: Web
+  library: phaser          # versão real: package.json / package-lock.json
+  language: JavaScript
+  code_root: src/
+  test_root: tests/
+  reference: docs/engine-reference/web/phaser.md
+
+platform:
+  targets: [browser-desktop]
+  resolution: { width: 1440, height: 900, scale: fit }
+
+design:
+  levels: design/levels/roteiro-fases.md
+  gdd: design/gdd/
+  ux_reference: design/ux/mockup-telas.html
+  content_data: src/gameData.js
+
+commands:
+  dev: npm run dev
+  build: npm run build
+  test_unit: npm run test:unit
+  smoke: npm run smoke
+  test: npm test

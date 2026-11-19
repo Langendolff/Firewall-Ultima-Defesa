@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Testes (Vitest / Playwright)
+test-results/
+playwright-report/
+blob-report/
+coverage/
+
+# Claude Code: configurações locais de cada pessoa
+.claude/settings.local.json
+CLAUDE.local.md
+.claude/worktrees/
+
+# Segredos
+.env
+.env.*
