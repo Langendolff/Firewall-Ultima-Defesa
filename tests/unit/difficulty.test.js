@@ -52,8 +52,18 @@ describe('applyDifficulty', () => {
     for (const [id, phase] of Object.entries(PHASES)) {
       expect(phase.wavesToWin).toBe(original[id].wavesToWin)
       expect(phase.maliciousPorts).toEqual(original[id].maliciousPorts)
-      expect(phase.objective).toBe(original[id].objective)
+      // a fase 5 cita a janela de isolamento no objetivo, que muda de propósito
+      if (Number(id) !== 5) expect(phase.objective).toBe(original[id].objective)
     }
+  })
+
+  it('o objetivo e a ameaça da fase 5 citam a janela de isolamento da dificuldade em uso', () => {
+    applyDifficulty('tranquilo')
+    expect(PHASES[5].objective).toContain('dentro de 15 segundos')
+    expect(PHASES[5].threats[0].desc).toContain('em 15 s')
+    applyDifficulty('desafio')
+    expect(PHASES[5].objective).toContain('dentro de 10 segundos')
+    expect(PHASES[5].threats[0].desc).toContain('em 10 s')
   })
 })
 

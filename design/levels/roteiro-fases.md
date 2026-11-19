@@ -163,7 +163,7 @@ O jogador agora é analista de segurança de uma empresa. A rede é mais complex
 | 💡 Conceito ensinado: A resposta a um incidente de ransomware tem 3 fases: Contenção (isolar o que foi infectado), Erradicação (remover o malware) e Recuperação (restaurar de backup). A regra 3-2-1 de backup: 3 cópias dos dados, em 2 mídias diferentes, sendo 1 offsite. |
 | :---- |
 
-* **Em determinado ponto da fase, o ransomware tenta se mover lateralmente pela rede. O jogador tem 10 segundos para cortar a conexão do PC infectado.** Momento dramático:
+* **Em determinado ponto da fase, o ransomware tenta se mover lateralmente pela rede. O jogador tem 10 segundos (15 no modo Tranquilo) para cortar a conexão do PC infectado.** Momento dramático:
 
 * **Linha do tempo do incidente mostrando exatamente como o ransomware se propagou — útil para discussão em sala de aula.** Debriefing:
 

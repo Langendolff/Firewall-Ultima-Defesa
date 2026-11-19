@@ -50,6 +50,8 @@ export const PORTS = {
   8080: { label: 'HTTP-ALT', desc: 'Canal alternativo usado por atualizações de fornecedores e sistemas internos.' },
 }
 
+const secondsOf = (ms) => Math.round(ms / 1000)
+
 const portsToGlossary = (portNumbers) => portNumbers.map((p) => ({ term: `Porta ${p} (${PORTS[p].label})`, desc: PORTS[p].desc }))
 
 export const PHASE_1 = {
@@ -240,10 +242,21 @@ export const PHASE_5 = {
     'contaminar outro em poucos segundos — e se nenhum host saudável restar, o próximo alvo é o banco',
     'de dados. Um servidor de backup foi instalado, mas restaurar um PC isolado custa dinheiro.',
   ],
-  objective:
-    'Clique em qualquer PC infectado dentro de 10 segundos para isolá-lo antes que o ransomware se espalhe. Use o servidor de backup para restaurar PCs isolados. Mantenha o banco de dados intacto por 6 ondas.',
+  // objetivo e ameaça citam a janela de isolamento, que muda com a dificuldade
+  // (src/difficulty.js): por isso são calculados na hora, a partir de quarantineWindowMs
+  get objective() {
+    return `Clique em qualquer PC infectado dentro de ${secondsOf(this.quarantineWindowMs)} segundos para isolá-lo antes que o ransomware se espalhe. Use o servidor de backup para restaurar PCs isolados. Mantenha o banco de dados intacto por 6 ondas.`
+  },
   tip: 'Isolar rápido é mais barato que deixar o ransomware se espalhar — cada PC perdido aproxima o ataque do banco de dados.',
-  threats: [{ name: 'Ransomware (SMB/RDP)', desc: 'Infecta um computador; se não for isolado em 10s, se espalha para outro.', level: 3 }],
+  get threats() {
+    return [
+      {
+        name: 'Ransomware (SMB/RDP)',
+        desc: `Infecta um computador; se não for isolado em ${secondsOf(this.quarantineWindowMs)} s, se espalha para outro.`,
+        level: 3,
+      },
+    ]
+  },
   glossary: [
     { term: 'Contenção', desc: 'Isolar um sistema infectado da rede para impedir que o ataque se espalhe.' },
     { term: 'Quarentena', desc: 'Cortar a conexão de um host comprometido, mantendo-o offline até ser limpo.' },

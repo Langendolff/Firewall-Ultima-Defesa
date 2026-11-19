@@ -208,7 +208,7 @@ export default class Phase5Scene extends Phaser.Scene {
     this.updatePcVisual(key)
     if (!this.firstInfectWarned) {
       this.firstInfectWarned = true
-      this.showToast('⚠️ PC infectado! Clique nele em 10s para isolar antes que o ransomware se espalhe.')
+      this.showToast(`⚠️ PC infectado! Clique nele em ${Math.round(PHASE_5.quarantineWindowMs / 1000)} s para isolar antes que o ransomware se espalhe.`)
     }
     this.time.delayedCall(PHASE_5.quarantineWindowMs, () => {
       if (this.gameOver || this.pcState[key] !== 'infected') return
